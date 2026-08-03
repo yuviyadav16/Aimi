@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aimi - Your AI Companion</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-color: #0d0f14;
+            --surface-color: #1a1d24;
+            --primary-color: #ff3366;
+            --secondary-color: #9d4edd;
+            --text-main: #ffffff;
+            --text-muted: #8b949e;
+            --border-color: #2d3139;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* --- SPLASH SCREEN --- */
+        #splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(135deg, #0d0f14 0%, #1a1016 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 1s ease-out;
+        }
+
+        .logo-container {
+            position: relative;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .logo-img {
+            width: 150px;
+            height: 150px;
+            border-radius: 35px;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 5rem;
+            font-weight: 700;
+            color: white;
+            box-shadow: 0 0 40px rgba(255, 51, 102, 0.4);
+        }
+
+        .app-title {
+            margin-top: 20px;
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            background: linear-gradient(45deg, #fff, #ffb3c6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .powered-by {
+            position: absolute;
+            bottom: 40px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            animation: fadeIn 2s forwards;
+            animation-delay: 1s;
+            opacity: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .powered-by span {
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-top: 5px;
+        }
+
+        /* --- APP LAYOUT (Mobile Wrapper) --- */
+        #app-container {
+            width: 100%;
+            max-width: 450px; /* Mobile App simulation */
+            height: 100vh;
+            background-color: var(--bg-color);
+            display: none; /* Hidden until splash ends */
+            flex-direction: column;
+            position: relative;
+            box-shadow: 0 0 50px rgba(0,0,0,0.5);
+            border-left: 1px solid var(--border-color);
+            border-right: 1px solid var(--border-color);
+        }
+
+        /* Header */
+        header {
+            padding: 20px;
+            background-color: var(--surface-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .header-profile {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .active-girl-img {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+        }
+
+        .header-icons i {
+            font-size: 1.2rem;
+            margin-left: 15px;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .header-icons i:hover { color: var(--primary-color); }
+
+        /* Chat Area */
+        .chat-area {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 12px 16px;
+            border-radius: 20px;
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+
+        .msg-ai {
+            background-color: var(--surface-color);
+            align-self: flex-start;
+            border-bottom-left-radius: 5px;
+        }
+
+        .msg-user {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            align-self: flex-end;
+            border-bottom-right-radius: 5px;
+        }
+
+        /* Input Area */
+        .input-area {
+            padding: 15px 20px;
+            background-color: var(--surface-color);
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .input-area input {
+            flex: 1;
+            padding: 12px 20px;
+            border-radius: 30px;
+            border: none;
+            background-color: #2a2d36;
+            color: white;
+            outline: none;
+        }
+
+        .send-btn {
+            background: var(--primary-color);
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            border: none;
+            color: white;
+        }
+
+        /* Settings Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(5px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .settings-modal {
+            background-color: var(--surface-color);
+            width: 90%;
+            max-width: 350px;
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid var(--border-color);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-header h2 { font-size: 1.2rem; }
+        .modal-header i { cursor: pointer; color: var(--text-muted); }
+
+        .setting-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .setting-item i { width: 30px; font-size: 1.1rem; }
+        .setting-item:hover { color: var(--primary-color); }
+        .text-danger { color: #ff4757; }
+        
+        .social-links {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .social-links a {
+            color: var(--text-muted);
+            font-size: 1.5rem;
+            transition: 0.3s;
+        }
+        .social-links a:hover { color: var(--primary-color); }
+
+        /* Delete Account Verification Flow */
+        #verify-delete {
+            display: none;
+            margin-top: 15px;
+            background: #2a1115;
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #ff4757;
+        }
+
+        #verify-delete input {
+            width: 100%;
+            padding: 10px;
+            background: #1a0a0d;
+            border: 1px solid #ff4757;
+            color: white;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            outline: none;
+        }
+
+        .btn-confirm-del {
+            background: #ff4757;
+            color: white;
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        /* Animations */
+        @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-10px); } 100% { transform: translateY(0px); } }
+        @keyframes fadeIn { to { opacity: 1; } }
+
+    </style>
+</head>
+<body>
+
+    <!-- 10-Second Splash Screen -->
+    <div id="splash-screen">
+        <div class="logo-container">
+            <!-- Representing uploaded 98.30.png / Aimi Logo -->
+            <div class="logo-img">A</div>
+        </div>
+        <div class="app-title">AIMI</div>
+        
+        <div class="powered-by">
+            POWERED BY
+            <span>EAGLEARC</span>
+        </div>
+    </div>
+
+    <!-- Main App UI -->
+    <div id="app-container">
+        
+        <!-- Header -->
+        <header>
+            <div class="header-profile">
+                <div class="active-girl-img">R</div>
+                <div>
+                    <h3 style="font-size: 1.1rem; margin:0;">Rani <i class="fas fa-crown" style="color: gold; font-size: 0.8rem;"></i></h3>
+                    <p style="font-size: 0.75rem; color: #4ade80;">Online</p>
+                </div>
+            </div>
+            <div class="header-icons">
+                <i class="fas fa-crown" title="Premium Plan" style="color:var(--primary-color)"></i>
+                <i class="fas fa-robot" title="Aimi Guide Bot"></i>
+                <i class="fas fa-cog" id="settings-btn" title="Settings"></i>
+            </div>
+        </header>
+
+        <!-- Chat Area -->
+        <div class="chat-area" id="chat-box">
+            <div class="message msg-ai">
+                Kya hua? Itni der se reply kyun nahi kiya tumne? Main koi free baithi hoon kya tumhara wait karne ke liye? 😒
+            </div>
+            <div class="message msg-user">
+                Sorry yaar, meeting mein tha. Gussa mat kar na.
+            </div>
+            <div class="message msg-ai">
+                Achha ji! Meeting mere se zyada zaroori ho gayi ab? Pehle dhang se sorry bolo phir baat karungi main aapse.
+            </div>
+        </div>
+
+        <!-- Input Area -->
+        <div class="input-area">
+            <i class="fas fa-plus-circle" style="color:var(--text-muted); cursor:pointer; font-size:1.2rem;"></i>
+            <input type="text" placeholder="Message Rani...">
+            <button class="send-btn"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal-overlay" id="settings-modal">
+        <div class="settings-modal">
+            <div class="modal-header">
+                <h2>Account Settings</h2>
+                <i class="fas fa-times" id="close-modal"></i>
+            </div>
+
+            <div class="setting-item">
+                <i class="fas fa-user-edit"></i> Edit Profile
+            </div>
+            <div class="setting-item">
+                <i class="fas fa-history"></i> Delete Chat History
+            </div>
+            <div class="setting-item">
+                <i class="fas fa-sign-out-alt"></i> Logout (All Devices)
+            </div>
+            <div class="setting-item text-danger" id="delete-acc-btn">
+                <i class="fas fa-trash-alt"></i> Delete Account
+            </div>
+
+            <!-- Email Verification Box (Hidden by default) -->
+            <div id="verify-delete">
+                <p style="font-size: 0.8rem; margin-bottom: 10px;">An OTP has been sent to your registered email. Enter it to permanently delete your account.</p>
+                <input type="text" placeholder="Enter 6-digit OTP">
+                <button class="btn-confirm-del">Confirm Delete</button>
+            </div>
+
+            <div style="text-align: center; margin-top: 25px; border-top: 1px solid var(--border-color); padding-top: 15px;">
+                <p style="font-size: 0.8rem; color: var(--text-muted);">Support & Help</p>
+                <div class="social-links">
+                    <a href="https://www.instagram.com/justanajnabi" target="_blank"><i class="fab fa-instagram"></i></a>
+                    <a href="https://t.me/eagleaarc" target="_blank"><i class="fab fa-telegram"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Splash Screen Logic (Simulating approx 8-10 seconds)
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('splash-screen').style.opacity = '0';
+                setTimeout(() => {
+                    document.getElementById('splash-screen').style.display = 'none';
+                    document.getElementById('app-container').style.display = 'flex';
+                }, 1000); // Wait for fade out transition
+            }, 6000); // Set to 6 seconds for practical preview, you can change to 10000 for exact 10s
+        });
+
+        // Modal Logic
+        const modal = document.getElementById('settings-modal');
+        const settingsBtn = document.getElementById('settings-btn');
+        const closeBtn = document.getElementById('close-modal');
+        const deleteBtn = document.getElementById('delete-acc-btn');
+        const verifyBox = document.getElementById('verify-delete');
+
+        settingsBtn.addEventListener('click', () => {
+            modal.style.display = 'flex';
+            verifyBox.style.display = 'none'; // Reset verification box
+        });
+
+        closeBtn.addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
+
+        // Show Email Verification on Delete Account Click
+        deleteBtn.addEventListener('click', () => {
+            if(verifyBox.style.display === 'none' || verifyBox.style.display === '') {
+                verifyBox.style.display = 'block';
+            } else {
+                verifyBox.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
+
