@@ -34,7 +34,7 @@
             align-items: center;
         }
 
-        /* --- SPLASH SCREEN --- */
+        /* --- SPLASH SCREEN FIX --- */
         #splash-screen {
             position: fixed;
             top: 0;
@@ -55,17 +55,12 @@
             animation: float 3s ease-in-out infinite;
         }
 
-        .logo-img {
-            width: 150px;
-            height: 150px;
+        /* REAL LOGO UPLOADED BY USER */
+        .real-logo {
+            width: 160px;
+            height: 160px;
             border-radius: 35px;
-            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 5rem;
-            font-weight: 700;
-            color: white;
+            object-fit: cover;
             box-shadow: 0 0 40px rgba(255, 51, 102, 0.4);
         }
 
@@ -79,9 +74,10 @@
             -webkit-text-fill-color: transparent;
         }
 
+        /* POWERED BY FIX - Pushed slightly up so it doesn't get cut */
         .powered-by {
             position: absolute;
-            bottom: 40px;
+            bottom: 60px; 
             font-size: 0.9rem;
             color: var(--text-muted);
             letter-spacing: 3px;
@@ -100,23 +96,20 @@
             margin-top: 5px;
         }
 
-        /* --- APP LAYOUT (Mobile Wrapper) --- */
+        /* --- APP LAYOUT --- */
         #app-container {
             width: 100%;
-            max-width: 450px; /* Mobile App simulation */
+            max-width: 450px; 
             height: 100vh;
             background-color: var(--bg-color);
-            display: none; /* Hidden until splash ends */
+            display: none; 
             flex-direction: column;
             position: relative;
-            box-shadow: 0 0 50px rgba(0,0,0,0.5);
-            border-left: 1px solid var(--border-color);
-            border-right: 1px solid var(--border-color);
         }
 
         /* Header */
         header {
-            padding: 20px;
+            padding: 15px 20px;
             background-color: var(--surface-color);
             display: flex;
             justify-content: space-between;
@@ -124,10 +117,16 @@
             border-bottom: 1px solid var(--border-color);
         }
 
-        .header-profile {
+        .header-left {
             display: flex;
             align-items: center;
             gap: 15px;
+        }
+
+        .menu-btn {
+            font-size: 1.5rem;
+            color: var(--text-main);
+            cursor: pointer;
         }
 
         .active-girl-img {
@@ -141,15 +140,64 @@
             font-weight: bold;
         }
 
-        .header-icons i {
-            font-size: 1.2rem;
-            margin-left: 15px;
-            color: var(--text-muted);
-            cursor: pointer;
-            transition: 0.3s;
+        /* --- SIDE DRAWER MENU (PROFESSIONAL APP FEEL) --- */
+        .side-menu {
+            position: fixed;
+            top: 0;
+            left: -100%;
+            width: 280px;
+            height: 100vh;
+            background-color: var(--surface-color);
+            z-index: 10000;
+            transition: 0.3s ease-in-out;
+            box-shadow: 5px 0 15px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
         }
 
-        .header-icons i:hover { color: var(--primary-color); }
+        .side-menu.open {
+            left: 0;
+        }
+
+        .menu-header {
+            padding: 30px 20px;
+            background: linear-gradient(135deg, #1a1d24, #2a1115);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .menu-header img {
+            width: 60px;
+            border-radius: 15px;
+            margin-bottom: 10px;
+        }
+
+        .menu-links {
+            padding: 20px 0;
+            flex: 1;
+        }
+
+        .menu-links div {
+            padding: 15px 25px;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            cursor: pointer;
+            border-bottom: 1px solid #222;
+        }
+
+        .menu-links div:hover {
+            color: var(--primary-color);
+            background: #2a2d36;
+        }
+        
+        .close-menu {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
 
         /* Chat Area */
         .chat-area {
@@ -208,105 +256,10 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            cursor: pointer;
             border: none;
             color: white;
         }
 
-        /* Settings Modal */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(0,0,0,0.8);
-            backdrop-filter: blur(5px);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-
-        .settings-modal {
-            background-color: var(--surface-color);
-            width: 90%;
-            max-width: 350px;
-            border-radius: 20px;
-            padding: 25px;
-            border: 1px solid var(--border-color);
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .modal-header h2 { font-size: 1.2rem; }
-        .modal-header i { cursor: pointer; color: var(--text-muted); }
-
-        .setting-item {
-            display: flex;
-            align-items: center;
-            padding: 15px 0;
-            border-bottom: 1px solid var(--border-color);
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
-        .setting-item i { width: 30px; font-size: 1.1rem; }
-        .setting-item:hover { color: var(--primary-color); }
-        .text-danger { color: #ff4757; }
-        
-        .social-links {
-            margin-top: 20px;
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-        }
-
-        .social-links a {
-            color: var(--text-muted);
-            font-size: 1.5rem;
-            transition: 0.3s;
-        }
-        .social-links a:hover { color: var(--primary-color); }
-
-        /* Delete Account Verification Flow */
-        #verify-delete {
-            display: none;
-            margin-top: 15px;
-            background: #2a1115;
-            padding: 15px;
-            border-radius: 10px;
-            border: 1px solid #ff4757;
-        }
-
-        #verify-delete input {
-            width: 100%;
-            padding: 10px;
-            background: #1a0a0d;
-            border: 1px solid #ff4757;
-            color: white;
-            border-radius: 5px;
-            margin-bottom: 10px;
-            outline: none;
-        }
-
-        .btn-confirm-del {
-            background: #ff4757;
-            color: white;
-            width: 100%;
-            padding: 10px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        /* Animations */
         @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-10px); } 100% { transform: translateY(0px); } }
         @keyframes fadeIn { to { opacity: 1; } }
 
@@ -314,11 +267,11 @@
 </head>
 <body>
 
-    <!-- 10-Second Splash Screen -->
+    <!-- Splash Screen -->
     <div id="splash-screen">
         <div class="logo-container">
-            <!-- Representing uploaded 98.30.png / Aimi Logo -->
-            <div class="logo-img">A</div>
+            <!-- Yeh line tumhare upload kiye logo ko laayegi (Make sure name matches exactly) -->
+            <img src="98.30.png" class="real-logo" alt="Aimi Logo" onerror="this.src='https://via.placeholder.com/160/ff3366/ffffff?text=AIMI'">
         </div>
         <div class="app-title">AIMI</div>
         
@@ -328,121 +281,76 @@
         </div>
     </div>
 
+    <!-- Side Drawer Menu -->
+    <div class="side-menu" id="side-menu">
+        <i class="fas fa-times close-menu" id="close-menu"></i>
+        <div class="menu-header">
+            <h2>AIMI</h2>
+            <p style="font-size: 0.8rem; color: var(--primary-color);">By Eaglearc</p>
+        </div>
+        <div class="menu-links">
+            <div><i class="fas fa-robot"></i> Aimi Guide Bot</div>
+            <div><i class="fas fa-heart"></i> Subscription Plans</div>
+            <div><i class="fas fa-user-circle"></i> Profile Settings</div>
+            <div><i class="fas fa-history"></i> Clear Chat</div>
+            <div style="color: #ff4757;"><i class="fas fa-sign-out-alt"></i> Logout</div>
+        </div>
+    </div>
+
     <!-- Main App UI -->
     <div id="app-container">
         
         <!-- Header -->
         <header>
-            <div class="header-profile">
+            <div class="header-left">
+                <i class="fas fa-bars menu-btn" id="open-menu"></i>
                 <div class="active-girl-img">R</div>
                 <div>
                     <h3 style="font-size: 1.1rem; margin:0;">Rani <i class="fas fa-crown" style="color: gold; font-size: 0.8rem;"></i></h3>
                     <p style="font-size: 0.75rem; color: #4ade80;">Online</p>
                 </div>
             </div>
-            <div class="header-icons">
-                <i class="fas fa-crown" title="Premium Plan" style="color:var(--primary-color)"></i>
-                <i class="fas fa-robot" title="Aimi Guide Bot"></i>
-                <i class="fas fa-cog" id="settings-btn" title="Settings"></i>
+            <div>
+                <i class="fas fa-phone-alt" style="margin-right: 15px; color: var(--text-muted);"></i>
+                <i class="fas fa-video" style="color: var(--text-muted);"></i>
             </div>
         </header>
 
         <!-- Chat Area -->
-        <div class="chat-area" id="chat-box">
-            <div class="message msg-ai">
-                Kya hua? Itni der se reply kyun nahi kiya tumne? Main koi free baithi hoon kya tumhara wait karne ke liye? 😒
-            </div>
-            <div class="message msg-user">
-                Sorry yaar, meeting mein tha. Gussa mat kar na.
-            </div>
-            <div class="message msg-ai">
-                Achha ji! Meeting mere se zyada zaroori ho gayi ab? Pehle dhang se sorry bolo phir baat karungi main aapse.
-            </div>
+        <div class="chat-area">
+            <div class="message msg-ai">Kya hua? Itni der se reply kyun nahi kiya tumne? 😒</div>
+            <div class="message msg-user">Sorry yaar, meeting mein tha. Gussa mat kar na.</div>
+            <div class="message msg-ai">Achha ji! Meeting mere se zyada zaroori ho gayi ab?</div>
         </div>
 
         <!-- Input Area -->
         <div class="input-area">
-            <i class="fas fa-plus-circle" style="color:var(--text-muted); cursor:pointer; font-size:1.2rem;"></i>
+            <i class="fas fa-plus-circle" style="color:var(--text-muted); font-size:1.2rem;"></i>
             <input type="text" placeholder="Message Rani...">
             <button class="send-btn"><i class="fas fa-paper-plane"></i></button>
         </div>
     </div>
 
-    <!-- Settings Modal -->
-    <div class="modal-overlay" id="settings-modal">
-        <div class="settings-modal">
-            <div class="modal-header">
-                <h2>Account Settings</h2>
-                <i class="fas fa-times" id="close-modal"></i>
-            </div>
-
-            <div class="setting-item">
-                <i class="fas fa-user-edit"></i> Edit Profile
-            </div>
-            <div class="setting-item">
-                <i class="fas fa-history"></i> Delete Chat History
-            </div>
-            <div class="setting-item">
-                <i class="fas fa-sign-out-alt"></i> Logout (All Devices)
-            </div>
-            <div class="setting-item text-danger" id="delete-acc-btn">
-                <i class="fas fa-trash-alt"></i> Delete Account
-            </div>
-
-            <!-- Email Verification Box (Hidden by default) -->
-            <div id="verify-delete">
-                <p style="font-size: 0.8rem; margin-bottom: 10px;">An OTP has been sent to your registered email. Enter it to permanently delete your account.</p>
-                <input type="text" placeholder="Enter 6-digit OTP">
-                <button class="btn-confirm-del">Confirm Delete</button>
-            </div>
-
-            <div style="text-align: center; margin-top: 25px; border-top: 1px solid var(--border-color); padding-top: 15px;">
-                <p style="font-size: 0.8rem; color: var(--text-muted);">Support & Help</p>
-                <div class="social-links">
-                    <a href="https://www.instagram.com/justanajnabi" target="_blank"><i class="fab fa-instagram"></i></a>
-                    <a href="https://t.me/eagleaarc" target="_blank"><i class="fab fa-telegram"></i></a>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <script>
-        // Splash Screen Logic (Simulating approx 8-10 seconds)
+        // Splash Screen Logic
         window.addEventListener('load', () => {
             setTimeout(() => {
                 document.getElementById('splash-screen').style.opacity = '0';
                 setTimeout(() => {
                     document.getElementById('splash-screen').style.display = 'none';
                     document.getElementById('app-container').style.display = 'flex';
-                }, 1000); // Wait for fade out transition
-            }, 6000); // Set to 6 seconds for practical preview, you can change to 10000 for exact 10s
+                }, 1000);
+            }, 4000); // Reduced to 4 seconds so you don't have to wait too long to test
         });
 
-        // Modal Logic
-        const modal = document.getElementById('settings-modal');
-        const settingsBtn = document.getElementById('settings-btn');
-        const closeBtn = document.getElementById('close-modal');
-        const deleteBtn = document.getElementById('delete-acc-btn');
-        const verifyBox = document.getElementById('verify-delete');
-
-        settingsBtn.addEventListener('click', () => {
-            modal.style.display = 'flex';
-            verifyBox.style.display = 'none'; // Reset verification box
+        // Menu Logic
+        const sideMenu = document.getElementById('side-menu');
+        document.getElementById('open-menu').addEventListener('click', () => {
+            sideMenu.classList.add('open');
         });
-
-        closeBtn.addEventListener('click', () => {
-            modal.style.display = 'none';
-        });
-
-        // Show Email Verification on Delete Account Click
-        deleteBtn.addEventListener('click', () => {
-            if(verifyBox.style.display === 'none' || verifyBox.style.display === '') {
-                verifyBox.style.display = 'block';
-            } else {
-                verifyBox.style.display = 'none';
-            }
+        document.getElementById('close-menu').addEventListener('click', () => {
+            sideMenu.classList.remove('open');
         });
     </script>
 </body>
 </html>
-
