@@ -2,193 +2,196 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <!-- PERFECT MOBILE RATIO (No Zooming, No Cutting) -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="theme-color" content="#0b0c10">
+    <meta name="theme-color" content="#0a0510">
     <title>Aimi - Premium AI Companion</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --bg-dark: #07080a;
-            --chat-bg: #0b0c10;
-            --surface: #15161c;
-            --primary: #ff3366;
-            --secondary: #ff758c;
+            --bg-deep: #0a0510;
+            --glass-panel: rgba(20, 15, 30, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --primary: #ff3366; /* Default, can be changed */
             --text-main: #ffffff;
-            --text-muted: #8b949e;
-            --border: #22242d;
+            --text-dim: #8b8b9e;
             --danger: #ff4757;
-            --success: #2ed573;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; -webkit-tap-highlight-color: transparent; }
         
-        /* STRICT MOBILE APP CONTAINER */
-        body, html { height: 100%; width: 100%; background-color: var(--bg-dark); color: var(--text-main); overflow: hidden; font-size: 14px; }
+        body, html { height: 100dvh; width: 100vw; background-color: var(--bg-deep); color: var(--text-main); overflow: hidden; font-size: 13px; }
         
-        #app-wrapper { width: 100%; height: 100%; position: relative; overflow: hidden; }
+        /* --- UTILITIES --- */
+        .social-mini { display: flex; justify-content: center; gap: 15px; margin-top: 15px; padding-top: 10px; border-top: 1px solid var(--glass-border); }
+        .social-mini a { color: var(--text-dim); font-size: 1.2rem; transition: 0.3s; text-decoration: none; }
+        .social-mini a:hover { color: var(--primary); }
 
-        .screen { width: 100%; height: 100%; position: absolute; top: 0; left: 0; display: none; flex-direction: column; animation: fadeIn 0.3s ease; }
+        /* --- MAIN LAYOUT (NON-WHATSAPP) --- */
+        #app-wrapper { width: 100%; height: 100%; position: relative; display: flex; flex-direction: column; background: radial-gradient(circle at top right, rgba(255,51,102,0.1), transparent), var(--bg-deep); }
 
-        /* --- 1. SPLASH SCREEN --- */
-        #splash-screen { background: radial-gradient(circle at center, #15161c 0%, #07080a 100%); justify-content: center; align-items: center; z-index: 100; }
-        .logo-img { width: 100px; height: 100px; border-radius: 25px; box-shadow: 0 0 30px rgba(255,51,102,0.3); }
-        .app-title { margin-top: 15px; font-size: 2rem; font-weight: 600; background: linear-gradient(45deg, #fff, #ff758c); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 2px;}
-        .social-footer { position: absolute; bottom: 30px; text-align: center; width: 100%; }
-        .social-footer p { font-size: 0.75rem; color: var(--text-muted); letter-spacing: 1px; margin-bottom: 10px; text-transform: uppercase; }
-        .social-icons a { color: var(--text-muted); font-size: 1.5rem; margin: 0 15px; transition: 0.3s; text-decoration: none; }
-        .social-icons a:hover { color: var(--primary); }
-
-        /* --- 2. AUTH SCREEN --- */
-        #auth-screen { background: var(--bg-dark); z-index: 90; display: none; flex-direction: column; }
-        .auth-header { padding: 30px 20px 15px; text-align: center; }
-        .auth-header img { width: 60px; border-radius: 15px; margin-bottom: 10px; }
-        .auth-header h2 { font-size: 1.4rem; font-weight: 600; }
-        .auth-header p { font-size: 0.8rem; color: var(--text-muted); }
+        /* Custom Modern Header */
+        header { background: var(--glass-panel); backdrop-filter: blur(10px); padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--glass-border); z-index: 10; }
         
-        .auth-box { background: var(--surface); flex: 1; border-radius: 25px 25px 0 0; padding: 25px 20px; box-shadow: 0 -5px 20px rgba(0,0,0,0.5); display: flex; flex-direction: column; }
-        .tabs { display: flex; background: #07080a; border-radius: 12px; margin-bottom: 20px; padding: 4px; }
-        .tab { flex: 1; text-align: center; padding: 10px; cursor: pointer; color: var(--text-muted); font-size: 0.9rem; font-weight: 500; border-radius: 10px; }
-        .tab.active { background: var(--primary); color: #fff; }
+        .btn-icon { background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); color: #fff; width: 35px; height: 35px; border-radius: 10px; display: flex; justify-content: center; align-items: center; cursor: pointer; font-size: 1rem; transition: 0.2s; }
+        .btn-icon:active { transform: scale(0.9); background: var(--primary); }
+
+        .active-girl-info { display: flex; flex-direction: column; align-items: center; }
+        .active-girl-info span { font-size: 1rem; font-weight: 600; letter-spacing: 1px; color: var(--primary); text-transform: uppercase; }
+        .active-girl-info small { font-size: 0.65rem; color: var(--text-dim); }
+
+        /* --- CHAT AREA --- */
+        .chat-container { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; scroll-behavior: smooth; }
         
-        .form { display: none; flex-direction: column; gap: 12px; }
-        .input-group label { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px; display: block; }
-        .input-group input { width: 100%; padding: 12px 15px; border-radius: 10px; border: 1px solid var(--border); background: #07080a; color: #fff; font-size: 0.9rem; outline: none; }
-        .input-group input:focus { border-color: var(--primary); }
-        .btn-main { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: #fff; border: none; padding: 14px; border-radius: 10px; font-weight: 600; font-size: 1rem; margin-top: 10px; cursor: pointer; width: 100%; }
-        .msg-alert { color: var(--danger); font-size: 0.8rem; text-align: center; display: none; }
-
-        /* --- 3. MAIN CHAT SCREEN (WHATSAPP STYLE) --- */
-        #main-screen { background: var(--chat-bg); z-index: 50; }
-        header { background: var(--surface); padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); height: 65px; z-index: 10; }
-        .head-left { display: flex; align-items: center; gap: 12px; cursor: pointer; }
-        .dp-img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 1.5px solid var(--primary); padding: 2px; }
-        .head-name { font-size: 1rem; font-weight: 600; }
-        .head-status { font-size: 0.7rem; color: var(--success); }
-        .head-icons i { font-size: 1.1rem; color: var(--text-muted); margin-left: 15px; cursor: pointer; }
-
-        .chat-area { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; background: url('https://www.transparenttextures.com/patterns/cubes.png') var(--chat-bg); }
-        .msg { max-width: 75%; padding: 10px 14px; font-size: 0.9rem; line-height: 1.4; position: relative; word-wrap: break-word; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
-        .msg-ai { background: var(--surface); color: #fff; align-self: flex-start; border-radius: 0 15px 15px 15px; }
-        .msg-user { background: var(--primary); color: #fff; align-self: flex-end; border-radius: 15px 0 15px 15px; }
-        .msg-time { font-size: 0.6rem; color: rgba(255,255,255,0.7); display: block; text-align: right; margin-top: 4px; }
-
-        .input-bar { background: var(--surface); padding: 10px; display: flex; align-items: center; gap: 10px; border-top: 1px solid var(--border); }
-        .input-bar i { font-size: 1.4rem; color: var(--text-muted); padding: 5px; cursor: pointer; }
-        .input-bar input { flex: 1; padding: 12px 15px; border-radius: 20px; border: none; background: #07080a; color: #fff; outline: none; font-size: 0.9rem; }
-        .btn-send { background: var(--primary); width: 40px; height: 40px; border-radius: 50%; display: flex; justify-content: center; align-items: center; color: #fff; border: none; cursor: pointer;}
-
-        /* --- SIDEBARS (COMPACT) --- */
-        .sidebar { position: absolute; top: 0; height: 100%; width: 80%; max-width: 300px; background: var(--surface); z-index: 80; transition: 0.3s; box-shadow: 0 0 20px rgba(0,0,0,0.8); display: flex; flex-direction: column; }
-        .left-menu { left: -100%; } .left-menu.open { left: 0; }
-        .right-menu { right: -100%; } .right-menu.open { right: 0; }
+        .msg-box { max-width: 80%; display: flex; flex-direction: column; animation: slideIn 0.3s ease; }
+        .msg-box.ai { align-self: flex-start; }
+        .msg-box.user { align-self: flex-end; }
         
-        .side-head { padding: 20px 15px; background: #07080a; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-        .side-head h3 { font-size: 1.1rem; }
-        .menu-scroll { flex: 1; overflow-y: auto; padding: 10px 0; }
+        .msg-content { padding: 10px 15px; font-size: 0.9rem; line-height: 1.4; position: relative; word-wrap: break-word; }
+        .msg-box.ai .msg-content { background: var(--glass-panel); border: 1px solid var(--glass-border); border-radius: 0 15px 15px 15px; color: #fff; }
+        .msg-box.user .msg-content { background: linear-gradient(135deg, var(--primary), #a62854); border-radius: 15px 0 15px 15px; color: #fff; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
         
-        /* 5 GIRLS PERFECTLY FIT */
-        .item-girl { display: flex; align-items: center; gap: 12px; padding: 10px 15px; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.02); }
-        .item-girl:hover, .item-girl.active { background: rgba(255,51,102,0.1); border-left: 3px solid var(--primary); }
-        .item-girl img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
-        .item-girl h4 { font-size: 0.9rem; }
-        .item-girl p { font-size: 0.7rem; color: var(--text-muted); }
+        .msg-time { font-size: 0.6rem; color: var(--text-dim); margin-top: 4px; }
+        .msg-box.user .msg-time { text-align: right; }
 
-        .menu-label { font-size: 0.7rem; color: var(--text-muted); margin: 15px 15px 5px; text-transform: uppercase; letter-spacing: 1px; }
-        .icon-item { display: flex; align-items: center; gap: 12px; padding: 10px 15px; cursor: pointer; font-size: 0.9rem; }
-        .icon-item i { width: 25px; text-align: center; font-size: 1.1rem; color: var(--text-muted); }
+        /* 3D Animated Emoji */
+        .emoji-3d { font-size: 2.5rem; display: inline-block; animation: floatEmoji 2s infinite ease-in-out; filter: drop-shadow(0 5px 5px rgba(0,0,0,0.5)); background: none !important; border: none !important; box-shadow: none !important; padding: 0 !important; }
 
-        /* --- MODALS (PROFILE, SETTINGS, WARNING) --- */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 150; display: none; justify-content: center; align-items: center; }
-        .modal-overlay.show { display: flex; }
-        .modal-box { background: var(--surface); width: 85%; max-width: 320px; border-radius: 20px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .modal-title { font-size: 1.1rem; font-weight: 600; margin-bottom: 15px; display: flex; justify-content: space-between; }
+        /* Media Grid for multiple uploads */
+        .media-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 5px; margin-top: 5px; }
+        .media-grid img { width: 100%; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); }
+
+        /* Custom Input Area */
+        .input-wrapper { background: var(--glass-panel); backdrop-filter: blur(10px); padding: 10px 15px; border-top: 1px solid var(--glass-border); display: flex; align-items: center; gap: 10px; padding-bottom: calc(10px + env(safe-area-inset-bottom)); }
+        .input-box { flex: 1; background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border); border-radius: 12px; padding: 12px 15px; color: #fff; font-size: 0.85rem; outline: none; transition: 0.3s; }
+        .input-box:focus { border-color: var(--primary); }
         
+        .send-btn, .mic-btn { background: var(--primary); color: #fff; border: none; width: 40px; height: 40px; border-radius: 12px; display: flex; justify-content: center; align-items: center; font-size: 1.1rem; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        .send-btn:active, .mic-btn:active { transform: scale(0.9); }
+        .mic-btn { background: var(--glass-panel); border: 1px solid var(--glass-border); color: var(--text-dim); box-shadow: none; }
+
+        /* --- SIDEBAR PANELS --- */
+        .panel { position: absolute; top: 0; height: 100%; width: 80%; max-width: 280px; background: rgba(10, 5, 16, 0.95); backdrop-filter: blur(15px); z-index: 100; transition: 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); border-right: 1px solid var(--glass-border); display: flex; flex-direction: column; }
+        .panel-left { left: -100%; } .panel-left.open { left: 0; }
+        .panel-right { right: -100%; border-left: 1px solid var(--glass-border); border-right: none; } .panel-right.open { right: 0; }
+        
+        .panel-header { padding: 20px 15px 15px; border-bottom: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center; }
+        .panel-header h3 { font-size: 1rem; font-weight: 500; color: var(--primary); text-transform: uppercase; letter-spacing: 1px;}
+        
+        .panel-content { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 15px; }
+        
+        /* Girls Menu List */
+        .girl-card { background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); border-radius: 12px; display: flex; align-items: center; gap: 12px; padding: 8px; cursor: pointer; transition: 0.3s; }
+        .girl-card:hover, .girl-card.active { border-color: var(--primary); background: rgba(255,51,102,0.1); }
+        .girl-card img { width: 50px; height: 50px; border-radius: 10px; object-fit: cover; }
+        .girl-card h4 { font-size: 0.85rem; margin-bottom: 2px; }
+        .girl-card p { font-size: 0.65rem; color: var(--text-dim); }
+
+        /* Menu Items */
+        .menu-item { padding: 12px; background: rgba(255,255,255,0.02); border-radius: 10px; font-size: 0.85rem; display: flex; align-items: center; gap: 10px; cursor: pointer; border: 1px solid transparent; }
+        .menu-item:hover { background: rgba(255,255,255,0.05); border-color: var(--glass-border); }
+        
+        /* ChatGPT Style History Item */
+        .history-item { padding: 10px; border-bottom: 1px solid var(--glass-border); font-size: 0.8rem; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+        .history-item:hover { color: var(--primary); }
+        .history-item .del-btn { color: var(--text-dim); padding: 5px; }
+        .history-item .del-btn:hover { color: var(--danger); }
+
+        /* Theme Selector */
+        .color-picker-wrap { display: flex; align-items: center; gap: 10px; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 10px; }
+        .color-picker-wrap input[type="color"] { background: none; border: none; width: 30px; height: 30px; cursor: pointer; padding: 0; }
+
         /* Toggles */
-        .setting-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
-        .toggle { width: 40px; height: 20px; background: var(--border); border-radius: 10px; position: relative; cursor: pointer; }
-        .toggle.on { background: var(--success); }
-        .toggle-ball { width: 16px; height: 16px; background: #fff; border-radius: 50%; position: absolute; top: 2px; left: 2px; transition: 0.2s; }
-        .toggle.on .toggle-ball { left: 22px; }
+        .toggle { width: 40px; height: 20px; background: rgba(255,255,255,0.1); border-radius: 10px; position: relative; cursor: pointer; transition: 0.3s; }
+        .toggle.on { background: var(--primary); }
+        .toggle-ball { width: 14px; height: 14px; background: #fff; border-radius: 50%; position: absolute; top: 3px; left: 3px; transition: 0.3s; }
+        .toggle.on .toggle-ball { left: 23px; }
 
-        .btn-danger { background: rgba(255,71,87,0.1); color: var(--danger); width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--danger); font-size: 0.9rem; margin-top: 15px; font-weight: 600; cursor: pointer;}
+        /* --- MODALS (WARNINGS) --- */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); z-index: 200; display: none; justify-content: center; align-items: center; }
+        .modal { background: var(--bg-deep); width: 85%; max-width: 300px; border-radius: 20px; padding: 25px 20px; border: 1px solid var(--danger); text-align: center; position: relative; box-shadow: 0 10px 40px rgba(255,71,87,0.2); }
+        .modal-icon { font-size: 2.5rem; color: var(--danger); margin-bottom: 15px; }
+        .modal h3 { font-size: 1rem; margin-bottom: 8px; }
+        .modal p { font-size: 0.75rem; color: var(--text-dim); margin-bottom: 20px; line-height: 1.4; }
         
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal-btns { display: flex; gap: 10px; margin-bottom: 20px; }
+        .btn-outline { flex: 1; padding: 10px; border: 1px solid var(--text-dim); background: transparent; color: #fff; border-radius: 10px; cursor: pointer; font-size: 0.8rem; }
+        .btn-danger { flex: 1; padding: 10px; border: none; background: var(--danger); color: #fff; border-radius: 10px; cursor: pointer; font-size: 0.8rem; font-weight: 600;}
+
+        /* Support Text in Modal */
+        .support-text { font-size: 0.7rem; color: var(--text-dim); border-top: 1px solid var(--glass-border); padding-top: 15px; }
+
+        @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes floatEmoji { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-10px) scale(1.1); } }
     </style>
 </head>
 <body>
 
 <div id="app-wrapper">
-    <!-- Attachments -->
-    <input type="file" id="media-upload" accept="image/*,video/*" style="display:none;" onchange="handleFile(event)">
+    <!-- Hidden Multiple File Input (Max 10) -->
+    <input type="file" id="media-upload" accept="image/*" multiple style="display:none;" onchange="handleFiles(event)">
 
-    <!-- 1. SPLASH SCREEN -->
-    <div id="splash-screen" class="screen">
-        <img src="98.30.png" class="logo-img" onerror="this.src='https://via.placeholder.com/100/ff3366/ffffff?text=A'">
-        <div class="app-title">AIMI</div>
-        <div class="social-footer">
-            <p>Powered By Eaglearc</p>
-            <div class="social-icons">
-                <a href="https://www.instagram.com/justanajnabi" target="_blank"><i class="fab fa-instagram"></i></a>
-                <a href="https://t.me/eagleaarc" target="_blank"><i class="fab fa-telegram"></i></a>
-            </div>
+    <!-- HEADER -->
+    <header>
+        <div class="btn-icon" onclick="togglePanel('app-menu')"><i class="fas fa-bars"></i></div>
+        <div class="active-girl-info">
+            <span id="header-name">RANI</span>
+            <small>Active Now</small>
         </div>
+        <div class="btn-icon" onclick="togglePanel('girl-menu')" style="background: rgba(255,51,102,0.1); border-color: var(--primary); color: var(--primary);">
+            <i class="fas fa-heart"></i>
+        </div>
+    </header>
+
+    <!-- CHAT AREA -->
+    <div class="chat-container" id="chat-box">
+        <!-- Messages populate here -->
     </div>
 
-    <!-- 2. AUTH SCREEN -->
-    <div id="auth-screen" class="screen">
-        <div class="auth-header">
-            <img src="98.30.png" onerror="this.src='https://via.placeholder.com/60/ff3366/ffffff?text=A'">
-            <h2>Welcome to AIMI</h2>
-            <p>Your Premium AI Companion</p>
+    <!-- INPUT AREA -->
+    <div class="input-wrapper">
+        <div class="btn-icon" style="border:none; background:transparent;" onclick="triggerUpload()">
+            <i class="fas fa-paperclip" style="font-size:1.2rem; color:var(--text-dim);"></i>
         </div>
-        
-        <div class="auth-box">
-            <div class="tabs">
-                <div class="tab active" onclick="showAuth('login')">Sign In</div>
-                <div class="tab" onclick="showAuth('signup')">Sign Up</div>
+        <input type="text" id="msg-input" class="input-box" placeholder="Type romantic message...">
+        <button class="mic-btn" onclick="playClickSound()"><i class="fas fa-microphone"></i></button>
+        <button class="send-btn" onclick="sendMsg()"><i class="fas fa-paper-plane"></i></button>
+    </div>
+
+    <!-- PANEL 1: APP SETTINGS (LEFT) -->
+    <div class="panel panel-left" id="app-menu">
+        <div class="panel-header">
+            <h3>App Menu</h3>
+            <i class="fas fa-times" onclick="closePanels()" style="cursor:pointer; color:var(--text-dim);"></i>
+        </div>
+        <div class="panel-content">
+            <!-- Profile -->
+            <div style="text-align:center; margin-bottom:10px;">
+                <img src="https://via.placeholder.com/70/222/fff?text=U" style="width:70px; height:70px; border-radius:20px; border:2px solid var(--primary); padding:2px;">
+                <h4 style="font-size:0.9rem; margin-top:5px;">User Profile</h4>
             </div>
 
-            <!-- Fix: Form visibility logic separated -->
-            <div id="login-form" class="form" style="display: flex;">
-                <div class="input-group">
-                    <label>Email Address</label>
-                    <input type="email" id="log-email" placeholder="example@mail.com">
-                </div>
-                <div class="input-group">
-                    <label>Password</label>
-                    <input type="password" id="log-pass" placeholder="Enter password">
-                </div>
-                <div class="msg-alert" id="log-err"></div>
-                <button class="btn-main" onclick="doLogin()">Sign In</button>
-            </div>
-
-            <div id="signup-form" class="form">
-                <div class="input-group">
-                    <label>Full Name</label>
-                    <input type="text" id="reg-name" placeholder="E.g. Rahul Kumar">
-                </div>
-                <div class="input-group">
-                    <label>Email Address</label>
-                    <input type="email" id="reg-email" placeholder="Valid email">
-                </div>
-                <!-- Fix: DOB is BACK for 18+ check -->
-                <div class="input-group">
-                    <label>Date of Birth (Must be 18+)</label>
-                    <input type="date" id="reg-dob">
-                </div>
-                <div class="input-group">
-                    <label>Create Password</label>
-                    <input type="password" id="reg-pass" placeholder="Strong password">
-                </div>
-                <div class="msg-alert" id="reg-err"></div>
-                <button class="btn-main" onclick="doSignup()">Create Account</button>
+            <div class="menu-label" style="font-size:0.65rem; color:var(--text-dim); text-transform:uppercase;">App Customization</div>
+            
+            <!-- Theme Changer -->
+            <div class="color-picker-wrap">
+                <span style="font-size:0.8rem; flex:1;">Chat Theme Color</span>
+                <input type="color" id="theme-color" value="#ff3366" onchange="changeTheme(this.value)">
             </div>
             
-            <div class="social-footer" style="position: relative; margin-top: auto;">
-                <p>Follow Us</p>
-                <div class="social-icons">
+            <!-- Click Sound Toggle -->
+            <div class="menu-item" style="justify-content:space-between;">
+                <span>Click Sound</span>
+                <div class="toggle on" id="sound-toggle" onclick="this.classList.toggle('on')"><div class="toggle-ball"></div></div>
+            </div>
+
+            <div class="menu-label" style="font-size:0.65rem; color:var(--text-dim); text-transform:uppercase; margin-top:15px;">Account Settings</div>
+            <div class="menu-item" onclick="showWarning('logout')"><i class="fas fa-sign-out-alt"></i> Logout</div>
+            <div class="menu-item" style="color:var(--danger);" onclick="showWarning('delete_account')"><i class="fas fa-trash"></i> Permanent Delete Account</div>
+
+            <div style="margin-top:auto;">
+                <p style="text-align:center; font-size:0.7rem; color:var(--text-dim);">Help & Support</p>
+                <div class="social-mini">
                     <a href="https://www.instagram.com/justanajnabi" target="_blank"><i class="fab fa-instagram"></i></a>
                     <a href="https://t.me/eagleaarc" target="_blank"><i class="fab fa-telegram"></i></a>
                 </div>
@@ -196,292 +199,306 @@
         </div>
     </div>
 
-    <!-- 3. MAIN CHAT SCREEN -->
-    <div id="main-screen" class="screen">
-        <header>
-            <div class="head-left" onclick="toggleSidebar('left-menu')">
-                <img src="" id="chat-dp" class="dp-img">
-                <div>
-                    <div class="head-name" id="chat-name">Rani</div>
-                    <div class="head-status">Online</div>
-                </div>
-            </div>
-            <div class="head-icons">
-                <i class="fas fa-video" style="color: var(--primary);"></i>
-                <i class="fas fa-ellipsis-v" onclick="toggleSidebar('right-menu')"></i>
-            </div>
-        </header>
-
-        <div class="chat-area" id="chat-box"></div>
-
-        <div class="input-bar">
-            <i class="fas fa-paperclip" onclick="document.getElementById('media-upload').click()"></i>
-            <input type="text" id="msg-input" placeholder="Type a message...">
-            <button class="btn-send" onclick="sendMsg()"><i class="fas fa-paper-plane"></i></button>
+    <!-- PANEL 2: GIRLS & HISTORY (RIGHT) -->
+    <div class="panel panel-right" id="girl-menu">
+        <div class="panel-header">
+            <h3>Companions</h3>
+            <i class="fas fa-times" onclick="closePanels()" style="cursor:pointer; color:var(--text-dim);"></i>
         </div>
+        <div class="panel-content" style="padding:10px;">
+            <!-- Girls List -->
+            <div id="girls-list-container" style="display:flex; flex-direction:column; gap:8px; border-bottom:1px solid var(--glass-border); padding-bottom:15px; margin-bottom:5px;">
+                <!-- Populated via JS -->
+            </div>
 
-        <!-- LEFT SIDEBAR (5 GIRLS & SETTINGS) -->
-        <div class="sidebar left-menu" id="left-menu">
-            <div class="side-head">
-                <h3>Your Companions</h3>
-                <i class="fas fa-times" style="cursor:pointer;" onclick="toggleSidebar('left-menu')"></i>
+            <!-- ChatGPT Style History for Active Girl -->
+            <h4 style="font-size:0.7rem; color:var(--text-dim); margin-left:5px; text-transform:uppercase;">Chat History</h4>
+            <div id="history-container" style="flex:1; overflow-y:auto;">
+                <!-- Populated via JS -->
             </div>
-            <div class="menu-scroll">
-                <!-- ALL 5 GIRLS VISIBLE COMPACTLY -->
-                <div class="item-girl active" onclick="loadChar('Rani')">
-                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&q=80">
-                    <div><h4 style="color:gold;">Rani <i class="fas fa-crown" style="font-size:0.7rem;"></i></h4><p>Premium Queen</p></div>
-                </div>
-                <div class="item-girl" onclick="loadChar('Aditi')">
-                    <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&q=80">
-                    <div><h4>Aditi</h4><p>Caring Wifey</p></div>
-                </div>
-                <div class="item-girl" onclick="loadChar('Priya')">
-                    <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=100&q=80">
-                    <div><h4>Priya</h4><p>Playful Partner</p></div>
-                </div>
-                <div class="item-girl" onclick="loadChar('Suhani')">
-                    <img src="https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=100&q=80">
-                    <div><h4>Suhani</h4><p>Innocent Love</p></div>
-                </div>
-                <div class="item-girl" onclick="loadChar('Arohi')">
-                    <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=100&q=80">
-                    <div><h4>Arohi</h4><p>Deep Soul</p></div>
-                </div>
-
-                <div class="menu-label">Settings & App</div>
-                <div class="icon-item" onclick="openModal('profile-modal')"><i class="fas fa-user-circle"></i> Edit Profile</div>
-                <div class="icon-item" onclick="openModal('settings-modal')"><i class="fas fa-cog"></i> Preferences</div>
-                <div class="icon-item" onclick="window.open('https://www.instagram.com/justanajnabi','_blank')"><i class="fab fa-instagram" style="color:#E1306C;"></i> Instagram</div>
-                <div class="icon-item" onclick="window.open('https://t.me/eagleaarc','_blank')"><i class="fab fa-telegram" style="color:#0088cc;"></i> Telegram</div>
-                <div class="icon-item" style="color:var(--danger);" onclick="logout()"><i class="fas fa-sign-out-alt" style="color:var(--danger);"></i> Logout</div>
+            
+            <div class="social-mini" style="margin-top:auto;">
+                <a href="https://www.instagram.com/justanajnabi" target="_blank"><i class="fab fa-instagram"></i></a>
+                <a href="https://t.me/eagleaarc" target="_blank"><i class="fab fa-telegram"></i></a>
             </div>
-        </div>
-
-        <!-- RIGHT SIDEBAR (HISTORY) -->
-        <div class="sidebar right-menu" id="right-menu">
-            <div class="side-head">
-                <h3>Chat History</h3>
-                <i class="fas fa-times" style="cursor:pointer;" onclick="toggleSidebar('right-menu')"></i>
-            </div>
-            <div class="menu-scroll">
-                <div class="icon-item" onclick="loadOldChat('Morning talks')"><i class="fas fa-history" style="color:var(--primary);"></i> Morning talks</div>
-                <div class="icon-item" onclick="loadOldChat('Cute argument')"><i class="fas fa-history" style="color:var(--primary);"></i> Cute argument</div>
-                <div style="padding: 15px;">
-                    <button class="btn-danger" onclick="openModal('warning-modal')"><i class="fas fa-trash"></i> Clear All History</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Overlay -->
-        <div class="modal-overlay" id="ui-overlay" onclick="closeAll()" style="z-index: 70;"></div>
-    </div>
-
-    <!-- MODALS -->
-    <!-- Profile Modal -->
-    <div class="modal-overlay" id="profile-modal">
-        <div class="modal-box">
-            <div class="modal-title">Edit Profile <i class="fas fa-times" style="cursor:pointer; color:gray;" onclick="closeAll()"></i></div>
-            <div style="text-align:center; margin-bottom:15px;">
-                <img src="https://via.placeholder.com/60/222/fff?text=U" id="user-dp-view" style="width:60px; height:60px; border-radius:50%; object-fit:cover; margin-bottom:5px;">
-                <br>
-                <span style="color:var(--primary); font-size:0.8rem; cursor:pointer;" onclick="document.getElementById('dp-file').click()">Change DP</span>
-                <input type="file" id="dp-file" accept="image/*" style="display:none;" onchange="updateDP(event)">
-            </div>
-            <div style="margin-bottom:15px;">
-                <label style="font-size:0.75rem; color:gray;">Your Name</label>
-                <input type="text" id="user-name-edit" value="User" style="width:100%; padding:10px; background:#07080a; border:1px solid #222; color:#fff; border-radius:8px; outline:none; margin-top:5px;">
-            </div>
-            <button class="btn-main" onclick="closeAll()">Save Changes</button>
         </div>
     </div>
 
-    <!-- Settings Modal -->
-    <div class="modal-overlay" id="settings-modal">
-        <div class="modal-box">
-            <div class="modal-title">Settings <i class="fas fa-times" style="cursor:pointer; color:gray;" onclick="closeAll()"></i></div>
-            <div class="setting-item"><span>Microphone</span><div class="toggle on" onclick="this.classList.toggle('on')"><div class="toggle-ball"></div></div></div>
-            <div class="setting-item"><span>Camera</span><div class="toggle on" onclick="this.classList.toggle('on')"><div class="toggle-ball"></div></div></div>
-            <div class="setting-item"><span>Location</span><div class="toggle" onclick="this.classList.toggle('on')"><div class="toggle-ball"></div></div></div>
-            <div class="setting-item"><span>Sounds</span><div class="toggle on" onclick="this.classList.toggle('on')"><div class="toggle-ball"></div></div></div>
-            <button class="btn-danger" onclick="closeAll(); setTimeout(()=>openModal('warning-modal'),200);">Delete Account</button>
-        </div>
-    </div>
+    <!-- Overlay -->
+    <div class="overlay" id="ui-overlay" onclick="closePanels()" style="z-index:90;"></div>
 
-    <!-- Warning Modal -->
-    <div class="modal-overlay" id="warning-modal">
-        <div class="modal-box" style="text-align:center;">
-            <i class="fas fa-exclamation-circle" style="font-size:2.5rem; color:var(--danger); margin-bottom:10px;"></i>
-            <h3 style="font-size:1.1rem; margin-bottom:5px;">Are you sure?</h3>
-            <p style="font-size:0.8rem; color:gray; margin-bottom:15px;">This action is permanent and cannot be undone.</p>
-            <div style="display:flex; gap:10px;">
-                <button class="btn-main" style="flex:1; background:#222; color:#fff;" onclick="closeAll()">Cancel</button>
-                <button class="btn-main" style="flex:1; background:var(--danger);" onclick="clearHistory()">Confirm</button>
+    <!-- WARNING MODALS (Dynamic) -->
+    <div class="overlay" id="warning-modal" style="z-index:200;">
+        <div class="modal">
+            <i class="fas fa-exclamation-triangle modal-icon"></i>
+            <h3 id="warn-title">Warning</h3>
+            <p id="warn-desc">Are you sure you want to perform this action?</p>
+            
+            <div class="modal-btns">
+                <button class="btn-outline" onclick="document.getElementById('warning-modal').style.display='none'">Cancel</button>
+                <button class="btn-danger" id="warn-confirm-btn" onclick="executeWarningAction()">Yes, Delete</button>
+            </div>
+            
+            <div class="support-text">
+                Contact for any problem
+                <div class="social-mini" style="margin-top:8px; border:none; padding:0;">
+                    <a href="https://www.instagram.com/justanajnabi" target="_blank"><i class="fab fa-instagram"></i></a>
+                    <a href="https://t.me/eagleaarc" target="_blank"><i class="fab fa-telegram"></i></a>
+                </div>
             </div>
         </div>
     </div>
+
+</div>
 
 <script>
-    // System Flow
-    document.addEventListener("DOMContentLoaded", () => {
-        document.getElementById('splash-screen').style.display = 'flex';
-        setTimeout(() => {
-            document.getElementById('splash-screen').style.display = 'none';
-            document.getElementById('auth-screen').style.display = 'flex';
-        }, 2500);
-    });
-
-    // Auth Logic
-    function showAuth(type) {
-        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        document.getElementById('login-form').style.display = 'none';
-        document.getElementById('signup-form').style.display = 'none';
-        
-        if(type === 'login') {
-            document.querySelectorAll('.tab')[0].classList.add('active');
-            document.getElementById('login-form').style.display = 'flex';
-        } else {
-            document.querySelectorAll('.tab')[1].classList.add('active');
-            document.getElementById('signup-form').style.display = 'flex';
-        }
-    }
-
-    if(!localStorage.getItem('aimi_db')) localStorage.setItem('aimi_db', JSON.stringify([]));
-
-    function doSignup() {
-        const name = document.getElementById('reg-name').value;
-        const email = document.getElementById('reg-email').value;
-        const dob = document.getElementById('reg-dob').value;
-        const pass = document.getElementById('reg-pass').value;
-        const err = document.getElementById('reg-err');
-        
-        err.style.display = 'block';
-        if(!name || !email || !dob || !pass) { err.innerText = "All fields required!"; return; }
-        
-        // 18+ Validation
-        const age = Math.abs(new Date(Date.now() - new Date(dob).getTime()).getUTCFullYear() - 1970);
-        if(age < 18) { err.innerText = "Must be 18+ to use Aimi."; return; }
-        
-        let users = JSON.parse(localStorage.getItem('aimi_db'));
-        if(users.find(u => u.email === email)) { err.innerText = "Email already registered!"; return; }
-
-        users.push({ name, email, pass });
-        localStorage.setItem('aimi_db', JSON.stringify(users));
-        
-        document.getElementById('user-name-edit').value = name;
-        err.style.display = 'none';
-        enterApp();
-    }
-
-    function doLogin() {
-        const email = document.getElementById('log-email').value;
-        const pass = document.getElementById('log-pass').value;
-        const err = document.getElementById('log-err');
-        
-        err.style.display = 'block';
-        if(!email || !pass) { err.innerText = "Enter Email and Password!"; return; }
-        
-        let user = JSON.parse(localStorage.getItem('aimi_db')).find(u => u.email === email && u.pass === pass);
-        if(!user) { err.innerText = "Invalid credentials!"; return; }
-        
-        document.getElementById('user-name-edit').value = user.name;
-        err.style.display = 'none';
-        enterApp();
-    }
-
-    function enterApp() {
-        document.getElementById('auth-screen').style.display = 'none';
-        document.getElementById('main-screen').style.display = 'flex';
-        loadChar('Rani');
-    }
-
-    function logout() {
-        document.getElementById('main-screen').style.display = 'none';
-        document.getElementById('auth-screen').style.display = 'flex';
-        closeAll();
-    }
-
-    // UI Logic
-    function toggleSidebar(id) {
-        const panel = document.getElementById(id);
-        if(panel.classList.contains('open')) closeAll();
-        else {
-            closeAll();
-            panel.classList.add('open');
-            document.getElementById('ui-overlay').style.display = 'block';
-        }
-    }
-
-    function openModal(id) {
-        closeAll();
-        document.getElementById(id).style.display = 'flex';
-    }
-
-    function closeAll() {
-        document.querySelectorAll('.sidebar').forEach(s => s.classList.remove('open'));
-        document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none');
-    }
-
-    function updateDP(e) {
-        if(e.target.files[0]) document.getElementById('user-dp-view').src = URL.createObjectURL(e.target.files[0]);
-    }
-
-    // Chat Logic
-    const chars = {
-        'Rani': { img: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&q=80', msg: "Tumhe kitni baar kaha hai jaldi reply kiya karo! 😒" },
-        'Aditi': { img: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&q=80', msg: "Aapne time pe khana khaya aaj?" },
-        'Priya': { img: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=100&q=80', msg: "Bore ho rahi hoon, chalo kuch fun karte hain 😉" },
-        'Suhani': { img: 'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=100&q=80', msg: "Aapka message dekh kar smile aa jati hai 🙈" },
-        'Arohi': { img: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=100&q=80', msg: "Tumhari din bhar ki bheed mein meri yaad aati hai?" }
+    // --- DATA & CONFIG ---
+    // Beautiful romantic poses from Unsplash
+    const girls = {
+        'Rani': { img: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=150&q=80', color: '#ff3366', desc: 'Bold Queen' },
+        'Aditi': { img: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&q=80', color: '#8e44ad', desc: 'Caring Wifey' },
+        'Priya': { img: 'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?auto=format&fit=crop&w=150&q=80', color: '#f39c12', desc: 'Playful Partner' },
+        'Suhani': { img: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80', color: '#00d2d3', desc: 'Sweet Love' },
+        'Arohi': { img: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=150&q=80', color: '#341f97', desc: 'Deep Soul' }
     };
-    let activeChar = '';
 
-    function loadChar(name) {
-        activeChar = name;
-        document.getElementById('chat-name').innerText = name;
-        document.getElementById('chat-dp').src = chars[name].img;
-        document.querySelectorAll('.item-girl').forEach(e => e.classList.remove('active'));
-        event.currentTarget.classList.add('active');
-        closeAll();
+    // ChatGPT style separate history for each girl
+    const histories = {
+        'Rani': [{id:1, title: 'Late night arguments'}, {id:2, title: 'Morning love'}],
+        'Aditi': [{id:3, title: 'Office stress talk'}],
+        'Priya': [{id:4, title: 'Fun games'}],
+        'Suhani': [{id:5, title: 'Shy confessions'}],
+        'Arohi': [{id:6, title: 'Deep poetry'}]
+    };
+
+    let activeGirl = 'Rani';
+    let pendingAction = ''; // For warning modal
+    let pendingData = null;
+
+    // --- SYSTEM INIT ---
+    window.onload = () => {
+        renderGirlsMenu();
+        loadGirl('Rani');
+    };
+
+    // --- SOUND EFFECT (Using Web Audio API for guaranteed beep) ---
+    function playClickSound() {
+        const soundOn = document.getElementById('sound-toggle').classList.contains('on');
+        if(!soundOn) return;
         
+        try {
+            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(800, ctx.currentTime);
+            gain.gain.setValueAtTime(0.1, ctx.currentTime);
+            osc.start();
+            gain.gain.exponentialRampToValueAtTime(0.00001, ctx.currentTime + 0.1);
+            osc.stop(ctx.currentTime + 0.1);
+        } catch(e) {}
+    }
+
+    // --- THEME ENGINE ---
+    function changeTheme(color) {
+        document.documentElement.style.setProperty('--primary', color);
+    }
+
+    // --- PANEL & MODAL UI ---
+    function togglePanel(id) {
+        playClickSound();
+        const panel = document.getElementById(id);
+        const overlay = document.getElementById('ui-overlay');
+        if(panel.classList.contains('open')){
+            panel.classList.remove('open');
+            overlay.style.display = 'none';
+        } else {
+            closePanels();
+            panel.classList.add('open');
+            overlay.style.display = 'block';
+        }
+    }
+
+    function closePanels() {
+        document.getElementById('app-menu').classList.remove('open');
+        document.getElementById('girl-menu').classList.remove('open');
+        document.getElementById('ui-overlay').style.display = 'none';
+    }
+
+    function showWarning(action, data = null) {
+        playClickSound();
+        pendingAction = action;
+        pendingData = data;
+        
+        const modal = document.getElementById('warning-modal');
+        const title = document.getElementById('warn-title');
+        const desc = document.getElementById('warn-desc');
+        const btn = document.getElementById('warn-confirm-btn');
+
+        if(action === 'logout') {
+            title.innerText = 'Log Out';
+            desc.innerText = 'Are you sure you want to log out of your account?';
+            btn.innerText = 'Log Out';
+        } else if(action === 'delete_account') {
+            title.innerText = 'Permanent Delete';
+            desc.innerText = 'Are you sure you want to permanently delete your account? All data will be lost.';
+            btn.innerText = 'Delete Account';
+        } else if(action === 'delete_chat') {
+            title.innerText = 'Delete Chat';
+            desc.innerText = 'Are you sure you want to delete this chat history?';
+            btn.innerText = 'Delete Chat';
+        }
+        
+        closePanels();
+        modal.style.display = 'flex';
+    }
+
+    function executeWarningAction() {
+        playClickSound();
+        if(pendingAction === 'delete_chat') {
+            // Remove from local array
+            histories[activeGirl] = histories[activeGirl].filter(h => h.id !== pendingData);
+            renderHistory();
+            document.getElementById('chat-box').innerHTML = `<div style="text-align:center; color:gray; font-size:0.8rem; margin-top:20px;">Chat Deleted</div>`;
+        } else if (pendingAction === 'logout' || pendingAction === 'delete_account') {
+            document.body.innerHTML = `<h2 style="text-align:center; margin-top:50vh; transform:translateY(-50%);">Logged Out / Deleted<br><small style="font-size:0.6rem;">Reload page to restart</small></h2>`;
+        }
+        document.getElementById('warning-modal').style.display = 'none';
+    }
+
+    // --- GIRL MENU & HISTORY ENGINE ---
+    function renderGirlsMenu() {
+        const container = document.getElementById('girls-list-container');
+        container.innerHTML = '';
+        
+        for(let name in girls) {
+            container.innerHTML += `
+                <div class="girl-card ${name === activeGirl ? 'active' : ''}" onclick="loadGirl('${name}')">
+                    <img src="${girls[name].img}">
+                    <div>
+                        <h4>${name}</h4>
+                        <p>${girls[name].desc}</p>
+                    </div>
+                </div>
+            `;
+        }
+    }
+
+    function renderHistory() {
+        const container = document.getElementById('history-container');
+        container.innerHTML = '';
+        
+        if(histories[activeGirl].length === 0) {
+            container.innerHTML = `<p style="font-size:0.7rem; color:gray; text-align:center;">No history found.</p>`;
+            return;
+        }
+
+        histories[activeGirl].forEach(h => {
+            container.innerHTML += `
+                <div class="history-item">
+                    <div onclick="loadOldChat('${h.title}')" style="flex:1;"><i class="far fa-comment-alt" style="margin-right:8px; color:var(--text-dim);"></i> ${h.title}</div>
+                    <i class="fas fa-trash del-btn" onclick="showWarning('delete_chat', ${h.id})"></i>
+                </div>
+            `;
+        });
+    }
+
+    function loadGirl(name) {
+        playClickSound();
+        activeGirl = name;
+        
+        // Change Theme color automatically to girl's color
+        document.getElementById('theme-color').value = girls[name].color;
+        changeTheme(girls[name].color);
+
+        // Update Header
+        document.getElementById('header-name').innerText = name;
+        
+        // Re-render menus
+        renderGirlsMenu();
+        renderHistory();
+        closePanels();
+        
+        // Clear chat & send welcome
         document.getElementById('chat-box').innerHTML = '';
-        pushMsg(chars[name].msg, 'ai');
+        setTimeout(() => pushMsg(`Hi, main ${name} hoon. Kaisi chal rahi hai life?`, 'ai'), 500);
     }
 
     function loadOldChat(title) {
-        closeAll();
+        playClickSound();
+        closePanels();
         document.getElementById('chat-box').innerHTML = '';
-        pushMsg(`*History loaded: ${title}*`, 'ai');
-        pushMsg("Main aapse baat nahi karungi ab.", 'ai');
-        pushMsg("Sorry gussa mat karo yaar.", 'user');
+        pushMsg(`*Viewing history: ${title}*`, 'ai');
     }
 
-    function clearHistory() {
-        closeAll();
-        document.getElementById('chat-box').innerHTML = `<div style="text-align:center; color:gray; font-size:0.8rem; margin-top:20px;">History Cleared</div>`;
+    // --- CHAT & MEDIA ENGINE ---
+    function isOnlyEmojis(str) {
+        const emojiRegex = /^[\u{1f300}-\u{1f5ff}\u{1f900}-\u{1f9ff}\u{1f600}-\u{1f64f}\u{1f680}-\u{1f6ff}\u{2600}-\u{26ff}\u{2700}-\u{27bf}\s]+$/u;
+        return emojiRegex.test(str.trim()) && str.trim().length > 0;
     }
 
     function sendMsg() {
+        playClickSound();
         const inp = document.getElementById('msg-input');
-        if(!inp.value.trim()) return;
-        pushMsg(inp.value, 'user');
+        const txt = inp.value.trim();
+        if(!txt) return;
+        
+        // Check if only emojis for 3D animation
+        if(isOnlyEmojis(txt)) {
+            pushMsg(`<span class="emoji-3d">${txt}</span>`, 'user');
+        } else {
+            pushMsg(txt, 'user');
+        }
+        
         inp.value = '';
-        setTimeout(() => pushMsg("Hmm, aage batao ❤️", 'ai'), 1200);
+        setTimeout(() => pushMsg("Tumhari baatein bahut achhi lagti hain... ❤️", 'ai'), 1200);
     }
 
-    function handleFile(e) {
-        if(!e.target.files[0]) return;
-        const url = URL.createObjectURL(e.target.files[0]);
-        pushMsg(`<img src="${url}" style="max-width:100%; border-radius:10px;">`, 'user');
-        setTimeout(() => pushMsg("Wow! Nice pic 😍", 'ai'), 1500);
+    // Handle upto 10 photos
+    function triggerUpload() {
+        playClickSound();
+        document.getElementById('media-upload').click();
     }
 
-    function pushMsg(txt, type) {
+    function handleFiles(e) {
+        const files = e.target.files;
+        if(files.length === 0) return;
+        
+        // Limit to 10
+        const limit = Math.min(files.length, 10);
+        let gridHTML = `<div class="media-grid">`;
+        
+        for(let i=0; i<limit; i++) {
+            const url = URL.createObjectURL(files[i]);
+            gridHTML += `<img src="${url}">`;
+        }
+        gridHTML += `</div>`;
+        
+        pushMsg(gridHTML, 'user');
+        e.target.value = ''; // reset
+        
+        setTimeout(() => pushMsg("Wow! Yeh photos kitni pyari hain 😍", 'ai'), 1500);
+    }
+
+    function pushMsg(content, type) {
         const box = document.getElementById('chat-box');
         const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-        box.innerHTML += `<div class="msg msg-${type}">${txt}<span class="msg-time">${time} ${type==='user'?'<i class="fas fa-check-double" style="color:#4ade80;"></i>':''}</span></div>`;
+        
+        box.innerHTML += `
+            <div class="msg-box ${type}">
+                <div class="msg-content">${content}</div>
+                <div class="msg-time">${time}</div>
+            </div>
+        `;
         box.scrollTop = box.scrollHeight;
     }
+
+    // Enter key to send
+    document.getElementById('msg-input').addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') sendMsg();
+    });
 </script>
 </body>
 </html>
