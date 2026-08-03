@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <!-- Yeh line app ko ekdum native full-screen feel degi -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="theme-color" content="#1a1d24">
     <title>Aimi - Your AI Companion</title>
@@ -32,7 +31,6 @@
             justify-content: center; 
         }
 
-        /* --- UI WRAPPER (100% MOBILE RATIO) --- */
         #app-wrapper { 
             width: 100%; 
             height: 100%; 
@@ -41,16 +39,25 @@
             overflow: hidden; 
         }
 
-        /* --- SCREENS --- */
-        .screen { width: 100%; height: 100%; position: absolute; top: 0; left: 0; display: none; flex-direction: column; }
-        .active-screen { display: flex; }
+        /* --- SCREENS (BUG FIXED HERE) --- */
+        .screen { 
+            width: 100%; 
+            height: 100%; 
+            position: absolute; 
+            top: 0; 
+            left: 0; 
+            display: none; /* Default hidden */
+            flex-direction: column; 
+            animation: fadeIn 0.4s ease-in-out;
+        }
+        /* Added !important so nothing can hide the active screen */
+        .active-screen { display: flex !important; }
 
         /* --- SPLASH SCREEN --- */
         #splash-screen { background: linear-gradient(135deg, #0d0f14 0%, #1a1016 100%); justify-content: center; align-items: center; z-index: 50; }
         .logo-img { width: 140px; height: 140px; border-radius: 35px; object-fit: cover; box-shadow: 0 0 40px rgba(255, 51, 102, 0.4); animation: float 3s infinite; }
         .app-title { margin-top: 20px; font-size: 2.8rem; font-weight: 700; background: linear-gradient(45deg, #fff, #ffb3c6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 2px;}
         
-        /* SOCIAL MEDIA HIGHLIGHTS */
         .social-promo { margin-top: 20px; display: flex; flex-direction: column; align-items: center; gap: 10px; background: rgba(255, 51, 102, 0.1); padding: 15px 30px; border-radius: 20px; border: 1px solid rgba(255, 51, 102, 0.3); }
         .social-promo p { font-size: 0.8rem; color: #ffb3c6; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
         .social-icons { display: flex; gap: 25px; font-size: 1.8rem; }
@@ -59,8 +66,9 @@
 
         .powered-by-text { position: absolute; bottom: 30px; color: var(--text-muted); font-size: 0.8rem; letter-spacing: 3px; }
 
-        /* --- AUTH SCREEN (Login/Signup) --- */
-        #auth-screen { background: linear-gradient(135deg, #1a1d24, #0d0f14); z-index: 40; overflow-y: auto; display: none; flex-direction: column; }
+        /* --- AUTH SCREEN --- */
+        /* Removed the accidental display: none from here */
+        #auth-screen { background: linear-gradient(135deg, #1a1d24, #0d0f14); z-index: 40; overflow-y: auto; }
         .auth-header { padding: 40px 20px 20px; text-align: center; }
         .auth-header img { width: 70px; border-radius: 18px; margin-bottom: 15px; box-shadow: 0 0 20px rgba(255,51,102,0.3); }
         .auth-box { background: var(--surface-color); padding: 30px 25px; border-radius: 30px 30px 0 0; flex: 1; border-top: 1px solid var(--border-color); box-shadow: 0 -10px 30px rgba(0,0,0,0.5); }
@@ -99,7 +107,7 @@
         .attach-item { display: flex; align-items: center; gap: 12px; padding: 12px 20px; cursor: pointer; border-radius: 10px; font-weight: 500; font-size: 1rem; transition: 0.2s; }
         .attach-item:hover { background: #3f3f46; }
 
-        /* --- SIDEBARS (Menu & History) --- */
+        /* --- SIDEBARS --- */
         .sidebar { position: absolute; top: 0; width: 85%; max-width: 320px; height: 100%; background: var(--surface-color); z-index: 100; transition: 0.3s ease-in-out; box-shadow: 0 0 30px rgba(0,0,0,0.9); display: flex; flex-direction: column; }
         .sidebar-left { left: -100%; }
         .sidebar-left.open { left: 0; }
@@ -115,23 +123,21 @@
         .menu-item.active { background: rgba(255,51,102,0.1); color: var(--primary-color); border-left: 4px solid var(--primary-color); }
         .menu-label { font-size: 0.8rem; color: var(--text-muted); padding: 10px 25px; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; margin-top: 10px; }
 
-        /* History specific */
         .new-chat-btn { margin: 20px; padding: 14px; background: transparent; border: 2px solid var(--primary-color); color: var(--primary-color); border-radius: 12px; display: flex; justify-content: center; align-items: center; gap: 10px; cursor: pointer; font-weight: 600; font-size: 1rem; transition: 0.3s; }
         .new-chat-btn:active { background: var(--primary-color); color: white; }
 
-        /* Overlay for Sidebar */
         .overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(2px); z-index: 90; display: none; opacity: 0; transition: 0.3s; }
         .overlay.show { display: block; opacity: 1; }
 
         @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-10px); } 100% { transform: translateY(0px); } }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
 
 <div id="app-wrapper">
     
-    <!-- Hidden File Inputs for REAL GALLERY Opening -->
+    <!-- Hidden File Inputs -->
     <input type="file" id="photo-upload" accept="image/*" style="display:none;" onchange="handleFileUpload(event, 'photo')">
     <input type="file" id="video-upload" accept="video/*" style="display:none;" onchange="handleFileUpload(event, 'video')">
 
@@ -151,7 +157,7 @@
         <div class="powered-by-text">POWERED BY EAGLEARC</div>
     </div>
 
-    <!-- 2. AUTH SCREEN (Login/Signup) -->
+    <!-- 2. AUTH SCREEN -->
     <div id="auth-screen" class="screen">
         <div class="auth-header">
             <img src="98.30.png" onerror="this.src='https://via.placeholder.com/70/ff3366/ffffff?text=A'">
@@ -165,7 +171,6 @@
                 <div class="auth-tab" onclick="switchAuth('signup')">Sign Up</div>
             </div>
 
-            <!-- Login Form -->
             <div id="form-login" class="auth-form active">
                 <div class="input-group">
                     <label>Email Address</label>
@@ -179,7 +184,6 @@
                 <button class="auth-btn" onclick="doLogin()">Sign In</button>
             </div>
 
-            <!-- Signup Form -->
             <div id="form-signup" class="auth-form">
                 <div class="input-group">
                     <label>Full Name</label>
@@ -213,8 +217,6 @@
 
     <!-- 3. MAIN APP SCREEN -->
     <div id="main-screen" class="screen">
-        
-        <!-- Header -->
         <header>
             <div class="header-left">
                 <i class="fas fa-bars menu-btn" onclick="toggleSidebar('sidebar-menu')"></i>
@@ -228,24 +230,17 @@
             </div>
         </header>
 
-        <!-- Chat Area -->
-        <div class="chat-area" id="chat-container">
-            <!-- Messages injected via JS -->
-        </div>
+        <div class="chat-area" id="chat-container"></div>
 
-        <!-- Input Area -->
         <div class="input-area">
             <i class="fas fa-plus-circle" style="color:var(--text-muted); font-size:1.6rem; cursor:pointer;" onclick="toggleMediaMenu()"></i>
             
-            <!-- Custom Attach Menu -->
             <div class="attach-menu" id="attach-menu">
                 <div class="attach-item" onclick="triggerFile('photo')">
-                    <i class="fas fa-image" style="color: #4ade80; font-size: 1.2rem;"></i> 
-                    Gallery Photo
+                    <i class="fas fa-image" style="color: #4ade80; font-size: 1.2rem;"></i> Gallery Photo
                 </div>
                 <div class="attach-item" onclick="triggerFile('video')">
-                    <i class="fas fa-video" style="color: #ff3366; font-size: 1.2rem;"></i> 
-                    Gallery Video
+                    <i class="fas fa-video" style="color: #ff3366; font-size: 1.2rem;"></i> Gallery Video
                 </div>
             </div>
 
@@ -253,10 +248,9 @@
             <button class="send-btn" onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
         </div>
 
-        <!-- OVERLAY FOR SIDEBARS -->
         <div class="overlay" id="app-overlay" onclick="closeAllSidebars()"></div>
 
-        <!-- LEFT SIDEBAR: Character Menu -->
+        <!-- LEFT SIDEBAR -->
         <div class="sidebar sidebar-left" id="sidebar-menu">
             <div class="sidebar-header">
                 <div>
@@ -284,7 +278,7 @@
             </div>
         </div>
 
-        <!-- RIGHT SIDEBAR: Chat History -->
+        <!-- RIGHT SIDEBAR -->
         <div class="sidebar sidebar-right" id="sidebar-history">
             <div class="sidebar-header">
                 <h3>Chat History</h3>
@@ -297,7 +291,6 @@
                 <div class="menu-label">Yesterday</div>
                 <div class="menu-item" style="font-size: 0.9rem;"><i class="far fa-comment-alt"></i> Movie plan...</div>
             </div>
-            <!-- Socials here too -->
             <div style="text-align: center; margin-top: auto; padding: 20px 0; border-top: 1px solid #222;">
                 <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 10px;">Support Us</p>
                 <div class="social-icons" style="justify-content: center;">
@@ -306,30 +299,17 @@
                 </div>
             </div>
         </div>
-
     </div>
 </div>
 
 <script>
     let activeChar = 'Rani';
-    
-    // DB Logic
     const chatDB = {
-        'Rani': [
-            { type: 'ai', msg: "Kya hua? Itni der se reply kyun nahi kiya tumne? Main koi free baithi hoon kya tumhara wait karne ke liye? 😒" }
-        ],
-        'Aditi': [
-            { type: 'ai', msg: "Suno, tumne khana khaya ya nahi? Dhyan rakha karo apna." }
-        ],
-        'Priya': [
-            { type: 'ai', msg: "Boring lag raha hai! Chalo flirt karte hain 😉" }
-        ],
-        'Suhani': [
-            { type: 'ai', msg: "Aap kaise ho? Maine aaj aapke baare mein hi socha poora din... 🙈" }
-        ],
-        'Arohi': [
-            { type: 'ai', msg: "Raat bahut gehri ho gayi hai... sab batao." }
-        ]
+        'Rani': [{ type: 'ai', msg: "Kya hua? Itni der se reply kyun nahi kiya tumne? Main koi free baithi hoon kya tumhara wait karne ke liye? 😒" }],
+        'Aditi': [{ type: 'ai', msg: "Suno, tumne khana khaya ya nahi? Dhyan rakha karo apna." }],
+        'Priya': [{ type: 'ai', msg: "Boring lag raha hai! Chalo flirt karte hain 😉" }],
+        'Suhani': [{ type: 'ai', msg: "Aap kaise ho? Maine aaj aapke baare mein hi socha poora din... 🙈" }],
+        'Arohi': [{ type: 'ai', msg: "Raat bahut gehri ho gayi hai... sab batao." }]
     };
 
     window.onload = () => {
@@ -342,7 +322,6 @@
     function switchAuth(type) {
         document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
         document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
-        
         if(type === 'login') {
             document.querySelectorAll('.auth-tab')[0].classList.add('active');
             document.getElementById('form-login').classList.add('active');
@@ -354,34 +333,28 @@
 
     function calculateAge(dobString) {
         if(!dobString) return 0;
-        const dob = new Date(dobString);
-        const diff_ms = Date.now() - dob.getTime();
-        const age_dt = new Date(diff_ms); 
-        return Math.abs(age_dt.getUTCFullYear() - 1970);
+        const diff_ms = Date.now() - new Date(dobString).getTime();
+        return Math.abs(new Date(diff_ms).getUTCFullYear() - 1970);
     }
 
     function doSignup() {
-        const name = document.getElementById('reg-name').value;
-        const email = document.getElementById('reg-email').value;
-        const dob = document.getElementById('reg-dob').value;
-        const pass = document.getElementById('reg-pass').value;
         const errorDiv = document.getElementById('reg-error');
-
         errorDiv.style.display = 'block';
-        if(!name || !email || !dob || !pass) { errorDiv.innerText = "All fields are required!"; return; }
-        if(calculateAge(dob) < 18) { errorDiv.innerText = "Access Denied: You must be 18+ to use Aimi."; return; }
-
+        if(!document.getElementById('reg-name').value || !document.getElementById('reg-email').value || !document.getElementById('reg-dob').value || !document.getElementById('reg-pass').value) {
+            errorDiv.innerText = "All fields are required!"; return; 
+        }
+        if(calculateAge(document.getElementById('reg-dob').value) < 18) {
+            errorDiv.innerText = "Access Denied: You must be 18+ to use Aimi."; return; 
+        }
         errorDiv.style.display = 'none';
         enterApp();
     }
 
     function doLogin() {
-        const email = document.getElementById('log-email').value;
-        const pass = document.getElementById('log-pass').value;
         const errorDiv = document.getElementById('login-error');
-
-        if(!email || !pass) { errorDiv.style.display = 'block'; errorDiv.innerText = "Email and Password required!"; return; }
-        
+        if(!document.getElementById('log-email').value || !document.getElementById('log-pass').value) {
+            errorDiv.style.display = 'block'; errorDiv.innerText = "Email and Password required!"; return; 
+        }
         errorDiv.style.display = 'none';
         enterApp();
     }
@@ -401,12 +374,11 @@
     function toggleSidebar(id) {
         const el = document.getElementById(id);
         const overlay = document.getElementById('app-overlay');
-        
         if (el.classList.contains('open')) {
             el.classList.remove('open');
             overlay.classList.remove('show');
         } else {
-            closeAllSidebars(); // Close others first
+            closeAllSidebars();
             el.classList.add('open');
             overlay.classList.add('show');
         }
@@ -422,34 +394,20 @@
         document.getElementById('attach-menu').classList.toggle('show');
     }
 
-    // --- REAL GALLERY LOGIC ---
     function triggerFile(type) {
         document.getElementById('attach-menu').classList.remove('show');
-        document.getElementById(type + '-upload').click(); // This opens native Gallery
+        document.getElementById(type + '-upload').click(); 
     }
 
     function handleFileUpload(event, type) {
         const file = event.target.files[0];
         if (!file) return;
-
         const container = document.getElementById('chat-container');
-        const fileUrl = URL.createObjectURL(file); // Create local URL for the selected file
-
-        let mediaHTML = '';
-        if (type === 'photo') {
-            mediaHTML = `<img src="${fileUrl}" style="max-width: 100%; border-radius: 12px; margin-top: 5px; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">`;
-        } else {
-            mediaHTML = `<video src="${fileUrl}" controls style="max-width: 100%; border-radius: 12px; margin-top: 5px; box-shadow: 0 4px 10px rgba(0,0,0,0.3);"></video>`;
-        }
-
-        // Add to chat UI
+        const fileUrl = URL.createObjectURL(file);
+        let mediaHTML = type === 'photo' ? `<img src="${fileUrl}" style="max-width: 100%; border-radius: 12px; margin-top: 5px;">` : `<video src="${fileUrl}" controls style="max-width: 100%; border-radius: 12px; margin-top: 5px;"></video>`;
         container.innerHTML += `<div class="message msg-user">${mediaHTML}</div>`;
         container.scrollTop = container.scrollHeight;
-        
-        // Reset input so same file can be selected again
         event.target.value = '';
-
-        // AI Reaction
         setTimeout(() => {
             let reaction = type === 'photo' ? "Wow! Tumhari photo bahut achhi hai 😍" : "Video dekhi maine, maza aa gaya! 🔥";
             container.innerHTML += `<div class="message msg-ai">${reaction}</div>`;
@@ -459,12 +417,9 @@
 
     function selectChar(charName) {
         activeChar = charName;
-        let icon = charName === 'Rani' ? '<i class="fas fa-crown" style="color: gold; font-size: 0.8rem;"></i>' : '';
-        document.getElementById('ui-char-name').innerHTML = `${charName} ${icon}`;
-        
+        document.getElementById('ui-char-name').innerHTML = `${charName} ${charName === 'Rani' ? '<i class="fas fa-crown" style="color: gold; font-size: 0.8rem;"></i>' : ''}`;
         document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
         document.getElementById(`menu-${charName.toLowerCase()}`).classList.add('active');
-        
         closeAllSidebars();
         loadChat(charName);
     }
@@ -472,10 +427,8 @@
     function loadChat(charName) {
         const container = document.getElementById('chat-container');
         container.innerHTML = '';
-        const history = chatDB[charName];
-        history.forEach(chat => {
-            const cssClass = chat.type === 'ai' ? 'msg-ai' : 'msg-user';
-            container.innerHTML += `<div class="message ${cssClass}">${chat.msg}</div>`;
+        chatDB[charName].forEach(chat => {
+            container.innerHTML += `<div class="message ${chat.type === 'ai' ? 'msg-ai' : 'msg-user'}">${chat.msg}</div>`;
         });
         container.scrollTop = container.scrollHeight;
     }
@@ -484,16 +437,12 @@
         const input = document.getElementById('chat-input');
         const msg = input.value.trim();
         if(!msg) return;
-
         const container = document.getElementById('chat-container');
         container.innerHTML += `<div class="message msg-user">${msg}</div>`;
         input.value = '';
         container.scrollTop = container.scrollHeight;
-
         setTimeout(() => {
-            let aiReply = "Aage bolo, main sun rahi hoon.";
-            if(activeChar === 'Rani') aiReply = "Pehle properly baat karo mujhse!";
-            container.innerHTML += `<div class="message msg-ai">${aiReply}</div>`;
+            container.innerHTML += `<div class="message msg-ai">${activeChar === 'Rani' ? 'Pehle properly baat karo mujhse!' : 'Aage bolo, main sun rahi hoon.'}</div>`;
             container.scrollTop = container.scrollHeight;
         }, 1000);
     }
@@ -506,3 +455,4 @@
 </script>
 </body>
 </html>
+
