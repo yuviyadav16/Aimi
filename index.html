@@ -2,522 +2,484 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <!-- PERFECT MOBILE RATIO PREVENTING SCREEN CUT -->
+    <!-- PERFECT MOBILE RATIO (No Zooming, No Cutting) -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="theme-color" content="#120e15">
+    <meta name="theme-color" content="#0b0c10">
     <title>Aimi - Premium AI Companion</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --bg-dark: #0b0c10;
-            --chat-bg: #120e15;
-            --surface: #1a1a24;
+            --bg-dark: #07080a;
+            --chat-bg: #0b0c10;
+            --surface: #15161c;
             --primary: #ff3366;
-            --primary-glow: rgba(255, 51, 102, 0.4);
             --secondary: #ff758c;
             --text-main: #ffffff;
             --text-muted: #8b949e;
-            --border: #2d3139;
+            --border: #22242d;
             --danger: #ff4757;
             --success: #2ed573;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; -webkit-tap-highlight-color: transparent; }
         
-        /* 100dvh PREVENTS SCREEN CUTTING ON MOBILE */
-        body, html { height: 100dvh; width: 100vw; background-color: var(--bg-dark); color: var(--text-main); overflow: hidden; }
+        /* STRICT MOBILE APP CONTAINER */
+        body, html { height: 100%; width: 100%; background-color: var(--bg-dark); color: var(--text-main); overflow: hidden; font-size: 14px; }
+        
+        #app-wrapper { width: 100%; height: 100%; position: relative; overflow: hidden; }
 
-        .screen { width: 100%; height: 100dvh; position: absolute; top: 0; left: 0; display: none; flex-direction: column; animation: fadeIn 0.3s ease; }
-        .active-screen { display: flex !important; }
+        .screen { width: 100%; height: 100%; position: absolute; top: 0; left: 0; display: none; flex-direction: column; animation: fadeIn 0.3s ease; }
 
-        /* --- SPLASH SCREEN --- */
-        #splash-screen { background: radial-gradient(circle at center, #1a1016 0%, #0b0c10 100%); justify-content: center; align-items: center; z-index: 100; }
-        .logo-img { width: 120px; height: 120px; border-radius: 35px; box-shadow: 0 0 40px var(--primary-glow); animation: pulse 2s infinite; object-fit: cover;}
-        .app-title { margin-top: 25px; font-size: 2.5rem; font-weight: 700; background: linear-gradient(45deg, #fff, #ff758c); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 2px;}
-        .powered-by { position: absolute; bottom: 40px; text-align: center; font-size: 0.8rem; color: var(--text-muted); letter-spacing: 2px; }
+        /* --- 1. SPLASH SCREEN --- */
+        #splash-screen { background: radial-gradient(circle at center, #15161c 0%, #07080a 100%); justify-content: center; align-items: center; z-index: 100; }
+        .logo-img { width: 100px; height: 100px; border-radius: 25px; box-shadow: 0 0 30px rgba(255,51,102,0.3); }
+        .app-title { margin-top: 15px; font-size: 2rem; font-weight: 600; background: linear-gradient(45deg, #fff, #ff758c); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 2px;}
+        .social-footer { position: absolute; bottom: 30px; text-align: center; width: 100%; }
+        .social-footer p { font-size: 0.75rem; color: var(--text-muted); letter-spacing: 1px; margin-bottom: 10px; text-transform: uppercase; }
+        .social-icons a { color: var(--text-muted); font-size: 1.5rem; margin: 0 15px; transition: 0.3s; text-decoration: none; }
+        .social-icons a:hover { color: var(--primary); }
 
-        /* --- AUTH SCREEN --- */
-        #auth-screen { background: var(--bg-dark); z-index: 90; overflow-y: auto; }
-        .auth-header { padding: 40px 20px 20px; text-align: center; }
-        .auth-header img { width: 80px; border-radius: 20px; margin-bottom: 15px; }
-        .auth-box { background: var(--surface); flex: 1; border-radius: 35px 35px 0 0; padding: 30px 25px; box-shadow: 0 -10px 30px rgba(0,0,0,0.5); }
-        .tabs { display: flex; background: #0b0c10; border-radius: 15px; margin-bottom: 25px; padding: 5px; }
-        .tab { flex: 1; text-align: center; padding: 12px; cursor: pointer; color: var(--text-muted); font-weight: 600; border-radius: 12px; transition: 0.3s; }
-        .tab.active { background: var(--primary); color: #fff; box-shadow: 0 4px 15px var(--primary-glow); }
-        .form { display: none; flex-direction: column; gap: 15px; }
-        .form.active { display: flex; }
-        .input-group label { font-size: 0.8rem; color: #a1a1aa; margin-bottom: 5px; display: block; }
-        .input-group input { width: 100%; padding: 16px; border-radius: 15px; border: 1px solid var(--border); background: #0b0c10; color: #fff; font-size: 1rem; outline: none; transition: 0.3s; }
+        /* --- 2. AUTH SCREEN --- */
+        #auth-screen { background: var(--bg-dark); z-index: 90; display: none; flex-direction: column; }
+        .auth-header { padding: 30px 20px 15px; text-align: center; }
+        .auth-header img { width: 60px; border-radius: 15px; margin-bottom: 10px; }
+        .auth-header h2 { font-size: 1.4rem; font-weight: 600; }
+        .auth-header p { font-size: 0.8rem; color: var(--text-muted); }
+        
+        .auth-box { background: var(--surface); flex: 1; border-radius: 25px 25px 0 0; padding: 25px 20px; box-shadow: 0 -5px 20px rgba(0,0,0,0.5); display: flex; flex-direction: column; }
+        .tabs { display: flex; background: #07080a; border-radius: 12px; margin-bottom: 20px; padding: 4px; }
+        .tab { flex: 1; text-align: center; padding: 10px; cursor: pointer; color: var(--text-muted); font-size: 0.9rem; font-weight: 500; border-radius: 10px; }
+        .tab.active { background: var(--primary); color: #fff; }
+        
+        .form { display: none; flex-direction: column; gap: 12px; }
+        .input-group label { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px; display: block; }
+        .input-group input { width: 100%; padding: 12px 15px; border-radius: 10px; border: 1px solid var(--border); background: #07080a; color: #fff; font-size: 0.9rem; outline: none; }
         .input-group input:focus { border-color: var(--primary); }
-        .btn-main { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: #fff; border: none; padding: 18px; border-radius: 15px; font-weight: 600; font-size: 1.1rem; margin-top: 10px; box-shadow: 0 5px 20px var(--primary-glow); cursor: pointer; transition: 0.2s; }
-        .btn-main:active { transform: scale(0.98); }
-        .msg-alert { color: var(--danger); font-size: 0.85rem; text-align: center; display: none; font-weight: 500; }
+        .btn-main { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: #fff; border: none; padding: 14px; border-radius: 10px; font-weight: 600; font-size: 1rem; margin-top: 10px; cursor: pointer; width: 100%; }
+        .msg-alert { color: var(--danger); font-size: 0.8rem; text-align: center; display: none; }
 
-        /* --- MAIN CHAT UI (WhatsApp Style but Romantic) --- */
+        /* --- 3. MAIN CHAT SCREEN (WHATSAPP STYLE) --- */
         #main-screen { background: var(--chat-bg); z-index: 50; }
-        header { background: rgba(26, 26, 36, 0.9); backdrop-filter: blur(10px); padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); z-index: 10; height: 75px;}
-        .head-left { display: flex; align-items: center; gap: 15px; cursor: pointer; }
-        .dp-img { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary); padding: 2px; }
-        
-        /* Chat Background with romantic pattern */
-        .chat-area { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; background: radial-gradient(circle at center, #1c151a 0%, #0b0c10 100%); }
-        .msg { max-width: 80%; padding: 12px 16px; font-size: 0.95rem; line-height: 1.4; position: relative; animation: slideUp 0.3s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.1); word-wrap: break-word;}
-        .msg-ai { background: var(--surface); color: #fff; align-self: flex-start; border-radius: 0 18px 18px 18px; }
-        .msg-user { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: #fff; align-self: flex-end; border-radius: 18px 0 18px 18px; }
-        .msg-time { font-size: 0.65rem; color: rgba(255,255,255,0.6); display: block; text-align: right; margin-top: 5px; }
+        header { background: var(--surface); padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); height: 65px; z-index: 10; }
+        .head-left { display: flex; align-items: center; gap: 12px; cursor: pointer; }
+        .dp-img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 1.5px solid var(--primary); padding: 2px; }
+        .head-name { font-size: 1rem; font-weight: 600; }
+        .head-status { font-size: 0.7rem; color: var(--success); }
+        .head-icons i { font-size: 1.1rem; color: var(--text-muted); margin-left: 15px; cursor: pointer; }
 
-        .input-bar { background: var(--surface); padding: 10px 15px; display: flex; align-items: center; gap: 12px; border-top: 1px solid var(--border); padding-bottom: calc(10px + env(safe-area-inset-bottom)); }
-        .input-bar input { flex: 1; padding: 14px 20px; border-radius: 30px; border: none; background: #0b0c10; color: #fff; outline: none; font-size: 1rem; }
-        .btn-send { background: var(--primary); width: 45px; height: 45px; border-radius: 50%; display: flex; justify-content: center; align-items: center; color: #fff; border: none; font-size: 1.2rem; cursor: pointer;}
-        
-        /* --- SIDEBARS & MENUS --- */
-        .sidebar { position: absolute; top: 0; height: 100dvh; width: 85%; max-width: 320px; background: var(--surface); z-index: 80; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 30px rgba(0,0,0,0.8); display: flex; flex-direction: column; }
+        .chat-area { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; background: url('https://www.transparenttextures.com/patterns/cubes.png') var(--chat-bg); }
+        .msg { max-width: 75%; padding: 10px 14px; font-size: 0.9rem; line-height: 1.4; position: relative; word-wrap: break-word; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        .msg-ai { background: var(--surface); color: #fff; align-self: flex-start; border-radius: 0 15px 15px 15px; }
+        .msg-user { background: var(--primary); color: #fff; align-self: flex-end; border-radius: 15px 0 15px 15px; }
+        .msg-time { font-size: 0.6rem; color: rgba(255,255,255,0.7); display: block; text-align: right; margin-top: 4px; }
+
+        .input-bar { background: var(--surface); padding: 10px; display: flex; align-items: center; gap: 10px; border-top: 1px solid var(--border); }
+        .input-bar i { font-size: 1.4rem; color: var(--text-muted); padding: 5px; cursor: pointer; }
+        .input-bar input { flex: 1; padding: 12px 15px; border-radius: 20px; border: none; background: #07080a; color: #fff; outline: none; font-size: 0.9rem; }
+        .btn-send { background: var(--primary); width: 40px; height: 40px; border-radius: 50%; display: flex; justify-content: center; align-items: center; color: #fff; border: none; cursor: pointer;}
+
+        /* --- SIDEBARS (COMPACT) --- */
+        .sidebar { position: absolute; top: 0; height: 100%; width: 80%; max-width: 300px; background: var(--surface); z-index: 80; transition: 0.3s; box-shadow: 0 0 20px rgba(0,0,0,0.8); display: flex; flex-direction: column; }
         .left-menu { left: -100%; } .left-menu.open { left: 0; }
         .right-menu { right: -100%; } .right-menu.open { right: 0; }
         
-        .side-head { padding: 25px 20px; background: #120e15; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-        .menu-scroll { flex: 1; overflow-y: auto; padding: 15px 0; }
-        .item-girl { display: flex; align-items: center; gap: 15px; padding: 12px 20px; border-bottom: 1px solid rgba(255,255,255,0.05); cursor: pointer; transition: 0.2s; }
-        .item-girl:hover, .item-girl.active { background: rgba(255,51,102,0.1); border-left: 4px solid var(--primary); }
-        .item-girl img { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; }
+        .side-head { padding: 20px 15px; background: #07080a; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        .side-head h3 { font-size: 1.1rem; }
+        .menu-scroll { flex: 1; overflow-y: auto; padding: 10px 0; }
         
-        /* --- SETTINGS & PROFILE MODALS --- */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100dvh; background: rgba(0,0,0,0.7); backdrop-filter: blur(5px); z-index: 150; display: none; justify-content: center; align-items: center; }
-        .modal-overlay.show { display: flex; animation: fadeIn 0.2s; }
-        .modal-box { background: var(--surface); width: 90%; max-width: 350px; border-radius: 25px; padding: 25px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
-        .modal-title { font-size: 1.2rem; font-weight: 600; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
+        /* 5 GIRLS PERFECTLY FIT */
+        .item-girl { display: flex; align-items: center; gap: 12px; padding: 10px 15px; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.02); }
+        .item-girl:hover, .item-girl.active { background: rgba(255,51,102,0.1); border-left: 3px solid var(--primary); }
+        .item-girl img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
+        .item-girl h4 { font-size: 0.9rem; }
+        .item-girl p { font-size: 0.7rem; color: var(--text-muted); }
+
+        .menu-label { font-size: 0.7rem; color: var(--text-muted); margin: 15px 15px 5px; text-transform: uppercase; letter-spacing: 1px; }
+        .icon-item { display: flex; align-items: center; gap: 12px; padding: 10px 15px; cursor: pointer; font-size: 0.9rem; }
+        .icon-item i { width: 25px; text-align: center; font-size: 1.1rem; color: var(--text-muted); }
+
+        /* --- MODALS (PROFILE, SETTINGS, WARNING) --- */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 150; display: none; justify-content: center; align-items: center; }
+        .modal-overlay.show { display: flex; }
+        .modal-box { background: var(--surface); width: 85%; max-width: 320px; border-radius: 20px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .modal-title { font-size: 1.1rem; font-weight: 600; margin-bottom: 15px; display: flex; justify-content: space-between; }
         
         /* Toggles */
-        .setting-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border); }
-        .toggle-switch { width: 50px; height: 26px; background: var(--border); border-radius: 20px; position: relative; cursor: pointer; transition: 0.3s; }
-        .toggle-switch.on { background: var(--success); }
-        .toggle-ball { width: 22px; height: 22px; background: #fff; border-radius: 50%; position: absolute; top: 2px; left: 2px; transition: 0.3s; }
-        .toggle-switch.on .toggle-ball { left: 26px; }
+        .setting-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
+        .toggle { width: 40px; height: 20px; background: var(--border); border-radius: 10px; position: relative; cursor: pointer; }
+        .toggle.on { background: var(--success); }
+        .toggle-ball { width: 16px; height: 16px; background: #fff; border-radius: 50%; position: absolute; top: 2px; left: 2px; transition: 0.2s; }
+        .toggle.on .toggle-ball { left: 22px; }
 
-        .btn-danger { background: rgba(255,71,87,0.1); color: var(--danger); width: 100%; padding: 15px; border-radius: 12px; border: 1px solid var(--danger); font-weight: 600; margin-top: 15px; cursor: pointer; }
+        .btn-danger { background: rgba(255,71,87,0.1); color: var(--danger); width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--danger); font-size: 0.9rem; margin-top: 15px; font-weight: 600; cursor: pointer;}
         
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes pulse { 0% { box-shadow: 0 0 20px var(--primary-glow); } 50% { box-shadow: 0 0 50px var(--primary-glow); } 100% { box-shadow: 0 0 20px var(--primary-glow); } }
     </style>
 </head>
 <body>
 
+<div id="app-wrapper">
+    <!-- Attachments -->
+    <input type="file" id="media-upload" accept="image/*,video/*" style="display:none;" onchange="handleFile(event)">
+
     <!-- 1. SPLASH SCREEN -->
-    <div id="splash-screen" class="screen active-screen">
-        <img src="98.30.png" class="logo-img" onerror="this.src='https://via.placeholder.com/120/ff3366/ffffff?text=A'">
+    <div id="splash-screen" class="screen">
+        <img src="98.30.png" class="logo-img" onerror="this.src='https://via.placeholder.com/100/ff3366/ffffff?text=A'">
         <div class="app-title">AIMI</div>
-        <div class="powered-by">
-            POWERED BY EAGLEARC<br>
-            <div style="font-size:1.5rem; margin-top:10px; display:flex; justify-content:center; gap:20px;">
-                <i class="fab fa-instagram"></i> <i class="fab fa-telegram"></i>
+        <div class="social-footer">
+            <p>Powered By Eaglearc</p>
+            <div class="social-icons">
+                <a href="https://www.instagram.com/justanajnabi" target="_blank"><i class="fab fa-instagram"></i></a>
+                <a href="https://t.me/eagleaarc" target="_blank"><i class="fab fa-telegram"></i></a>
             </div>
         </div>
     </div>
 
-    <!-- 2. AUTHENTICATION SCREEN -->
+    <!-- 2. AUTH SCREEN -->
     <div id="auth-screen" class="screen">
         <div class="auth-header">
-            <img src="98.30.png" onerror="this.src='https://via.placeholder.com/80/ff3366/ffffff?text=A'">
+            <img src="98.30.png" onerror="this.src='https://via.placeholder.com/60/ff3366/ffffff?text=A'">
             <h2>Welcome to AIMI</h2>
-            <p style="color: var(--text-muted); font-size: 0.9rem;">The Ultimate Virtual Companion</p>
+            <p>Your Premium AI Companion</p>
         </div>
         
         <div class="auth-box">
             <div class="tabs">
-                <div class="tab active" onclick="switchTab('login')">Sign In</div>
-                <div class="tab" onclick="switchTab('signup')">Sign Up</div>
+                <div class="tab active" onclick="showAuth('login')">Sign In</div>
+                <div class="tab" onclick="showAuth('signup')">Sign Up</div>
             </div>
 
-            <!-- Login -->
-            <div id="tab-login" class="form active">
+            <!-- Fix: Form visibility logic separated -->
+            <div id="login-form" class="form" style="display: flex;">
                 <div class="input-group">
-                    <label>Email</label>
-                    <input type="email" id="l-email" placeholder="Enter your email">
+                    <label>Email Address</label>
+                    <input type="email" id="log-email" placeholder="example@mail.com">
                 </div>
                 <div class="input-group">
                     <label>Password</label>
-                    <input type="password" id="l-pass" placeholder="Enter password">
+                    <input type="password" id="log-pass" placeholder="Enter password">
                 </div>
-                <div class="msg-alert" id="l-err"></div>
-                <button class="btn-main" onclick="processLogin()">Sign In</button>
+                <div class="msg-alert" id="log-err"></div>
+                <button class="btn-main" onclick="doLogin()">Sign In</button>
             </div>
 
-            <!-- Signup -->
-            <div id="tab-signup" class="form">
+            <div id="signup-form" class="form">
                 <div class="input-group">
                     <label>Full Name</label>
-                    <input type="text" id="s-name" placeholder="E.g. Rahul">
+                    <input type="text" id="reg-name" placeholder="E.g. Rahul Kumar">
                 </div>
                 <div class="input-group">
-                    <label>Email</label>
-                    <input type="email" id="s-email" placeholder="Valid email">
+                    <label>Email Address</label>
+                    <input type="email" id="reg-email" placeholder="Valid email">
+                </div>
+                <!-- Fix: DOB is BACK for 18+ check -->
+                <div class="input-group">
+                    <label>Date of Birth (Must be 18+)</label>
+                    <input type="date" id="reg-dob">
                 </div>
                 <div class="input-group">
-                    <label>Password</label>
-                    <input type="password" id="s-pass" placeholder="Strong password">
+                    <label>Create Password</label>
+                    <input type="password" id="reg-pass" placeholder="Strong password">
                 </div>
-                <div class="msg-alert" id="s-err"></div>
-                <button class="btn-main" onclick="processSignup()">Create Account</button>
+                <div class="msg-alert" id="reg-err"></div>
+                <button class="btn-main" onclick="doSignup()">Create Account</button>
+            </div>
+            
+            <div class="social-footer" style="position: relative; margin-top: auto;">
+                <p>Follow Us</p>
+                <div class="social-icons">
+                    <a href="https://www.instagram.com/justanajnabi" target="_blank"><i class="fab fa-instagram"></i></a>
+                    <a href="https://t.me/eagleaarc" target="_blank"><i class="fab fa-telegram"></i></a>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- 3. MAIN APP SCREEN -->
+    <!-- 3. MAIN CHAT SCREEN -->
     <div id="main-screen" class="screen">
-        <!-- Header -->
         <header>
-            <div class="head-left" onclick="togglePanel('left-menu')">
-                <img src="" id="head-dp" class="dp-img">
+            <div class="head-left" onclick="toggleSidebar('left-menu')">
+                <img src="" id="chat-dp" class="dp-img">
                 <div>
-                    <h3 id="head-name" style="font-size: 1.1rem;">Rani</h3>
-                    <p style="font-size: 0.75rem; color: var(--success);">Online</p>
+                    <div class="head-name" id="chat-name">Rani</div>
+                    <div class="head-status">Online</div>
                 </div>
             </div>
-            <div style="display:flex; gap:15px; font-size:1.2rem;">
+            <div class="head-icons">
                 <i class="fas fa-video" style="color: var(--primary);"></i>
-                <i class="fas fa-history" onclick="togglePanel('right-menu')"></i>
+                <i class="fas fa-ellipsis-v" onclick="toggleSidebar('right-menu')"></i>
             </div>
         </header>
 
-        <!-- Chat Area -->
         <div class="chat-area" id="chat-box"></div>
 
-        <!-- Input Area -->
         <div class="input-bar">
-            <i class="fas fa-plus" style="font-size: 1.5rem; color: var(--text-muted); cursor:pointer;" onclick="document.getElementById('file-upload').click()"></i>
-            <input type="file" id="file-upload" accept="image/*,video/*" style="display:none;" onchange="sendFile(event)">
-            
-            <input type="text" id="msg-input" placeholder="Message...">
+            <i class="fas fa-paperclip" onclick="document.getElementById('media-upload').click()"></i>
+            <input type="text" id="msg-input" placeholder="Type a message...">
             <button class="btn-send" onclick="sendMsg()"><i class="fas fa-paper-plane"></i></button>
         </div>
 
-        <!-- LEFT PANEL: Girl Menu & Profile -->
+        <!-- LEFT SIDEBAR (5 GIRLS & SETTINGS) -->
         <div class="sidebar left-menu" id="left-menu">
             <div class="side-head">
                 <h3>Your Companions</h3>
-                <i class="fas fa-times" onclick="togglePanel('left-menu')"></i>
+                <i class="fas fa-times" style="cursor:pointer;" onclick="toggleSidebar('left-menu')"></i>
             </div>
             <div class="menu-scroll">
-                <!-- Real Images Used Here -->
-                <div class="item-girl active" onclick="loadCompanion('Rani')">
-                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80">
-                    <div>
-                        <h4 style="color:gold;">Rani (Premium)</h4>
-                        <p style="font-size:0.75rem; color:gray;">Bold & Queen</p>
-                    </div>
+                <!-- ALL 5 GIRLS VISIBLE COMPACTLY -->
+                <div class="item-girl active" onclick="loadChar('Rani')">
+                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&q=80">
+                    <div><h4 style="color:gold;">Rani <i class="fas fa-crown" style="font-size:0.7rem;"></i></h4><p>Premium Queen</p></div>
                 </div>
-                <div class="item-girl" onclick="loadCompanion('Aditi')">
-                    <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=100&q=80">
-                    <div>
-                        <h4>Aditi (Wifey)</h4>
-                        <p style="font-size:0.75rem; color:gray;">Caring Partner</p>
-                    </div>
+                <div class="item-girl" onclick="loadChar('Aditi')">
+                    <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&q=80">
+                    <div><h4>Aditi</h4><p>Caring Wifey</p></div>
                 </div>
-                <div class="item-girl" onclick="loadCompanion('Priya')">
-                    <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=100&q=80">
-                    <div>
-                        <h4>Priya (Playful)</h4>
-                        <p style="font-size:0.75rem; color:gray;">Naughty & Fun</p>
-                    </div>
+                <div class="item-girl" onclick="loadChar('Priya')">
+                    <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=100&q=80">
+                    <div><h4>Priya</h4><p>Playful Partner</p></div>
                 </div>
-                <div class="item-girl" onclick="loadCompanion('Suhani')">
-                    <img src="https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?auto=format&fit=crop&w=100&q=80">
-                    <div>
-                        <h4>Suhani (Sweet)</h4>
-                        <p style="font-size:0.75rem; color:gray;">Innocent Love</p>
-                    </div>
+                <div class="item-girl" onclick="loadChar('Suhani')">
+                    <img src="https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=100&q=80">
+                    <div><h4>Suhani</h4><p>Innocent Love</p></div>
                 </div>
-                
-                <h4 style="margin: 20px 20px 10px; font-size: 0.8rem; color:gray;">ACCOUNT & SETTINGS</h4>
-                <div class="item-girl" onclick="openModal('profile-modal')">
-                    <i class="fas fa-user-circle" style="font-size: 1.5rem; width:50px; text-align:center;"></i>
-                    <h4>My Profile</h4>
+                <div class="item-girl" onclick="loadChar('Arohi')">
+                    <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=100&q=80">
+                    <div><h4>Arohi</h4><p>Deep Soul</p></div>
                 </div>
-                <div class="item-girl" onclick="openModal('settings-modal')">
-                    <i class="fas fa-cog" style="font-size: 1.5rem; width:50px; text-align:center;"></i>
-                    <h4>App Settings</h4>
-                </div>
-                <div class="item-girl" style="color: var(--danger);" onclick="logout()">
-                    <i class="fas fa-sign-out-alt" style="font-size: 1.5rem; width:50px; text-align:center;"></i>
-                    <h4>Logout</h4>
-                </div>
+
+                <div class="menu-label">Settings & App</div>
+                <div class="icon-item" onclick="openModal('profile-modal')"><i class="fas fa-user-circle"></i> Edit Profile</div>
+                <div class="icon-item" onclick="openModal('settings-modal')"><i class="fas fa-cog"></i> Preferences</div>
+                <div class="icon-item" onclick="window.open('https://www.instagram.com/justanajnabi','_blank')"><i class="fab fa-instagram" style="color:#E1306C;"></i> Instagram</div>
+                <div class="icon-item" onclick="window.open('https://t.me/eagleaarc','_blank')"><i class="fab fa-telegram" style="color:#0088cc;"></i> Telegram</div>
+                <div class="icon-item" style="color:var(--danger);" onclick="logout()"><i class="fas fa-sign-out-alt" style="color:var(--danger);"></i> Logout</div>
             </div>
         </div>
 
-        <!-- RIGHT PANEL: History -->
+        <!-- RIGHT SIDEBAR (HISTORY) -->
         <div class="sidebar right-menu" id="right-menu">
             <div class="side-head">
                 <h3>Chat History</h3>
-                <i class="fas fa-times" onclick="togglePanel('right-menu')"></i>
+                <i class="fas fa-times" style="cursor:pointer;" onclick="toggleSidebar('right-menu')"></i>
             </div>
-            <div class="menu-scroll" style="padding:0;">
-                <div class="item-girl" onclick="loadHistoryChat('Late night romantic talk')">
-                    <i class="fas fa-history" style="color:var(--primary);"></i>
-                    <h4 style="font-size:0.9rem;">Late night talk</h4>
-                </div>
-                <div class="item-girl" onclick="loadHistoryChat('Fight over reply time')">
-                    <i class="fas fa-history" style="color:var(--primary);"></i>
-                    <h4 style="font-size:0.9rem;">Fight over reply...</h4>
-                </div>
-                
-                <!-- History Delete Button -->
-                <div style="padding: 20px;">
-                    <button class="btn-danger" onclick="openModal('warning-modal', 'Clear all chat history?')"><i class="fas fa-trash"></i> Delete All History</button>
+            <div class="menu-scroll">
+                <div class="icon-item" onclick="loadOldChat('Morning talks')"><i class="fas fa-history" style="color:var(--primary);"></i> Morning talks</div>
+                <div class="icon-item" onclick="loadOldChat('Cute argument')"><i class="fas fa-history" style="color:var(--primary);"></i> Cute argument</div>
+                <div style="padding: 15px;">
+                    <button class="btn-danger" onclick="openModal('warning-modal')"><i class="fas fa-trash"></i> Clear All History</button>
                 </div>
             </div>
         </div>
 
-        <!-- Overlay for Panels -->
-        <div class="modal-overlay" id="panel-overlay" onclick="closePanels()" style="z-index: 70;"></div>
+        <!-- Overlay -->
+        <div class="modal-overlay" id="ui-overlay" onclick="closeAll()" style="z-index: 70;"></div>
     </div>
 
     <!-- MODALS -->
-    
-    <!-- User Profile Modal -->
+    <!-- Profile Modal -->
     <div class="modal-overlay" id="profile-modal">
         <div class="modal-box">
-            <div class="modal-title">Edit Profile <i class="fas fa-times" onclick="closeModals()"></i></div>
-            <div style="text-align: center; margin-bottom: 20px;">
-                <img src="https://via.placeholder.com/80/333/fff?text=User" id="user-dp-preview" style="width:80px; height:80px; border-radius:50%; object-fit:cover; margin-bottom:10px;">
+            <div class="modal-title">Edit Profile <i class="fas fa-times" style="cursor:pointer; color:gray;" onclick="closeAll()"></i></div>
+            <div style="text-align:center; margin-bottom:15px;">
+                <img src="https://via.placeholder.com/60/222/fff?text=U" id="user-dp-view" style="width:60px; height:60px; border-radius:50%; object-fit:cover; margin-bottom:5px;">
                 <br>
-                <button style="background:transparent; color:var(--primary); border:none; cursor:pointer;" onclick="document.getElementById('dp-upload').click()">Change Picture</button>
-                <input type="file" id="dp-upload" accept="image/*" style="display:none;" onchange="updateUserDP(event)">
+                <span style="color:var(--primary); font-size:0.8rem; cursor:pointer;" onclick="document.getElementById('dp-file').click()">Change DP</span>
+                <input type="file" id="dp-file" accept="image/*" style="display:none;" onchange="updateDP(event)">
             </div>
-            <div class="input-group">
-                <label>Your Name</label>
-                <input type="text" id="user-name-input" value="Rahul">
+            <div style="margin-bottom:15px;">
+                <label style="font-size:0.75rem; color:gray;">Your Name</label>
+                <input type="text" id="user-name-edit" value="User" style="width:100%; padding:10px; background:#07080a; border:1px solid #222; color:#fff; border-radius:8px; outline:none; margin-top:5px;">
             </div>
-            <button class="btn-main" style="width:100%; margin-top:20px;" onclick="closeModals()">Save Changes</button>
+            <button class="btn-main" onclick="closeAll()">Save Changes</button>
         </div>
     </div>
 
     <!-- Settings Modal -->
     <div class="modal-overlay" id="settings-modal">
         <div class="modal-box">
-            <div class="modal-title">Settings <i class="fas fa-times" onclick="closeModals()"></i></div>
-            <div class="setting-item">
-                <span>Microphone Access</span>
-                <div class="toggle-switch on" onclick="this.classList.toggle('on')"><div class="toggle-ball"></div></div>
-            </div>
-            <div class="setting-item">
-                <span>Camera & Media</span>
-                <div class="toggle-switch on" onclick="this.classList.toggle('on')"><div class="toggle-ball"></div></div>
-            </div>
-            <div class="setting-item">
-                <span>Location Services</span>
-                <div class="toggle-switch" onclick="this.classList.toggle('on')"><div class="toggle-ball"></div></div>
-            </div>
-            <div class="setting-item">
-                <span>App Sounds</span>
-                <div class="toggle-switch on" onclick="this.classList.toggle('on')"><div class="toggle-ball"></div></div>
-            </div>
-            <button class="btn-danger" onclick="openModal('warning-modal', 'Permanently Delete Account?')">Delete Account</button>
+            <div class="modal-title">Settings <i class="fas fa-times" style="cursor:pointer; color:gray;" onclick="closeAll()"></i></div>
+            <div class="setting-item"><span>Microphone</span><div class="toggle on" onclick="this.classList.toggle('on')"><div class="toggle-ball"></div></div></div>
+            <div class="setting-item"><span>Camera</span><div class="toggle on" onclick="this.classList.toggle('on')"><div class="toggle-ball"></div></div></div>
+            <div class="setting-item"><span>Location</span><div class="toggle" onclick="this.classList.toggle('on')"><div class="toggle-ball"></div></div></div>
+            <div class="setting-item"><span>Sounds</span><div class="toggle on" onclick="this.classList.toggle('on')"><div class="toggle-ball"></div></div></div>
+            <button class="btn-danger" onclick="closeAll(); setTimeout(()=>openModal('warning-modal'),200);">Delete Account</button>
         </div>
     </div>
 
-    <!-- Warning/Delete Modal -->
+    <!-- Warning Modal -->
     <div class="modal-overlay" id="warning-modal">
         <div class="modal-box" style="text-align:center;">
-            <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: var(--danger); margin-bottom: 15px;"></i>
-            <h3 id="warning-text" style="margin-bottom: 10px;">Are you sure?</h3>
-            <p style="font-size: 0.8rem; color:gray; margin-bottom: 20px;">This action cannot be undone.</p>
+            <i class="fas fa-exclamation-circle" style="font-size:2.5rem; color:var(--danger); margin-bottom:10px;"></i>
+            <h3 style="font-size:1.1rem; margin-bottom:5px;">Are you sure?</h3>
+            <p style="font-size:0.8rem; color:gray; margin-bottom:15px;">This action is permanent and cannot be undone.</p>
             <div style="display:flex; gap:10px;">
-                <button class="btn-main" style="flex:1; background:#333; box-shadow:none;" onclick="closeModals()">Cancel</button>
-                <button class="btn-main" style="flex:1; background:var(--danger); box-shadow:none;" onclick="confirmDelete()">Confirm</button>
+                <button class="btn-main" style="flex:1; background:#222; color:#fff;" onclick="closeAll()">Cancel</button>
+                <button class="btn-main" style="flex:1; background:var(--danger);" onclick="clearHistory()">Confirm</button>
             </div>
         </div>
     </div>
 
 <script>
-    // --- SPLASH SCREEN LOGIC ---
-    setTimeout(() => {
-        document.getElementById('splash-screen').classList.remove('active-screen');
-        document.getElementById('auth-screen').classList.add('active-screen');
-    }, 2500);
+    // System Flow
+    document.addEventListener("DOMContentLoaded", () => {
+        document.getElementById('splash-screen').style.display = 'flex';
+        setTimeout(() => {
+            document.getElementById('splash-screen').style.display = 'none';
+            document.getElementById('auth-screen').style.display = 'flex';
+        }, 2500);
+    });
 
-    // --- REAL AUTHENTICATION LOGIC (LocalStorage) ---
-    function switchTab(type) {
+    // Auth Logic
+    function showAuth(type) {
         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        document.querySelectorAll('.form').forEach(f => f.classList.remove('active'));
-        document.getElementById(`tab-${type}`).classList.add('active');
-        document.getElementById(`tab-${type}`).previousElementSibling?.classList.add('active'); // For tab UI
-    }
-
-    // Initialize DB
-    if(!localStorage.getItem('aimi_db')) {
-        localStorage.setItem('aimi_db', JSON.stringify([]));
-    }
-
-    function processSignup() {
-        const name = document.getElementById('s-name').value.trim();
-        const email = document.getElementById('s-email').value.trim();
-        const pass = document.getElementById('s-pass').value.trim();
-        const err = document.getElementById('s-err');
+        document.getElementById('login-form').style.display = 'none';
+        document.getElementById('signup-form').style.display = 'none';
         
-        if(!name || !email || !pass) { err.innerText = "All fields required!"; err.style.display="block"; return; }
+        if(type === 'login') {
+            document.querySelectorAll('.tab')[0].classList.add('active');
+            document.getElementById('login-form').style.display = 'flex';
+        } else {
+            document.querySelectorAll('.tab')[1].classList.add('active');
+            document.getElementById('signup-form').style.display = 'flex';
+        }
+    }
+
+    if(!localStorage.getItem('aimi_db')) localStorage.setItem('aimi_db', JSON.stringify([]));
+
+    function doSignup() {
+        const name = document.getElementById('reg-name').value;
+        const email = document.getElementById('reg-email').value;
+        const dob = document.getElementById('reg-dob').value;
+        const pass = document.getElementById('reg-pass').value;
+        const err = document.getElementById('reg-err');
+        
+        err.style.display = 'block';
+        if(!name || !email || !dob || !pass) { err.innerText = "All fields required!"; return; }
+        
+        // 18+ Validation
+        const age = Math.abs(new Date(Date.now() - new Date(dob).getTime()).getUTCFullYear() - 1970);
+        if(age < 18) { err.innerText = "Must be 18+ to use Aimi."; return; }
         
         let users = JSON.parse(localStorage.getItem('aimi_db'));
-        
-        // Strict Validation: Ek Email se Ek hi account
-        if(users.find(u => u.email === email)) {
-            err.innerText = "Error: Account with this email already exists!"; 
-            err.style.display="block"; 
-            return; 
-        }
+        if(users.find(u => u.email === email)) { err.innerText = "Email already registered!"; return; }
 
         users.push({ name, email, pass });
         localStorage.setItem('aimi_db', JSON.stringify(users));
-        document.getElementById('user-name-input').value = name; // set profile
+        
+        document.getElementById('user-name-edit').value = name;
+        err.style.display = 'none';
         enterApp();
     }
 
-    function processLogin() {
-        const email = document.getElementById('l-email').value.trim();
-        const pass = document.getElementById('l-pass').value.trim();
-        const err = document.getElementById('l-err');
-
-        if(!email || !pass) { err.innerText = "Enter credentials!"; err.style.display="block"; return; }
-
-        let users = JSON.parse(localStorage.getItem('aimi_db'));
-        let user = users.find(u => u.email === email && u.pass === pass);
-
-        if(!user) {
-            err.innerText = "Invalid Email or Password!"; 
-            err.style.display="block"; 
-            return; 
-        }
-
-        document.getElementById('user-name-input').value = user.name;
+    function doLogin() {
+        const email = document.getElementById('log-email').value;
+        const pass = document.getElementById('log-pass').value;
+        const err = document.getElementById('log-err');
+        
+        err.style.display = 'block';
+        if(!email || !pass) { err.innerText = "Enter Email and Password!"; return; }
+        
+        let user = JSON.parse(localStorage.getItem('aimi_db')).find(u => u.email === email && u.pass === pass);
+        if(!user) { err.innerText = "Invalid credentials!"; return; }
+        
+        document.getElementById('user-name-edit').value = user.name;
+        err.style.display = 'none';
         enterApp();
     }
 
     function enterApp() {
-        document.getElementById('auth-screen').classList.remove('active-screen');
-        document.getElementById('main-screen').classList.add('active-screen');
-        loadCompanion('Rani'); // Default
+        document.getElementById('auth-screen').style.display = 'none';
+        document.getElementById('main-screen').style.display = 'flex';
+        loadChar('Rani');
     }
 
     function logout() {
-        document.getElementById('main-screen').classList.remove('active-screen');
-        document.getElementById('auth-screen').classList.add('active-screen');
-        closePanels();
+        document.getElementById('main-screen').style.display = 'none';
+        document.getElementById('auth-screen').style.display = 'flex';
+        closeAll();
     }
 
-    // --- UI, MENU & MODAL LOGIC ---
-    function togglePanel(id) {
+    // UI Logic
+    function toggleSidebar(id) {
         const panel = document.getElementById(id);
-        const overlay = document.getElementById('panel-overlay');
-        if(panel.classList.contains('open')){
-            panel.classList.remove('open');
-            overlay.style.display = 'none';
-        } else {
-            closePanels();
+        if(panel.classList.contains('open')) closeAll();
+        else {
+            closeAll();
             panel.classList.add('open');
-            overlay.style.display = 'block';
-        }
-    }
-    
-    function closePanels() {
-        document.getElementById('left-menu').classList.remove('open');
-        document.getElementById('right-menu').classList.remove('open');
-        document.getElementById('panel-overlay').style.display = 'none';
-    }
-
-    function openModal(id, text = '') {
-        closePanels(); // Close sidebars if open
-        document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('show'));
-        const modal = document.getElementById(id);
-        if(text && id === 'warning-modal') document.getElementById('warning-text').innerText = text;
-        modal.classList.add('show');
-    }
-
-    function closeModals() {
-        document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('show'));
-    }
-
-    function confirmDelete() {
-        closeModals();
-        // Show empty chat area
-        document.getElementById('chat-box').innerHTML = `<div style="text-align:center; color:gray; margin-top:50px;">History Cleared</div>`;
-    }
-
-    function updateUserDP(event) {
-        if(event.target.files[0]) {
-            document.getElementById('user-dp-preview').src = URL.createObjectURL(event.target.files[0]);
+            document.getElementById('ui-overlay').style.display = 'block';
         }
     }
 
-    // --- COMPANION & CHAT LOGIC ---
-    const companions = {
-        'Rani': { img: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80', msg: "Kya hua? Reply kyun nahi kiya? 😒" },
-        'Aditi': { img: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=100&q=80', msg: "Suno, apna khayal rakha karo." },
-        'Priya': { img: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=100&q=80', msg: "Chalo na kuch romantic baatein karein 😉" },
-        'Suhani': { img: 'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?auto=format&fit=crop&w=100&q=80', msg: "Aapka din kaisa gaya aaj? 🙈" }
+    function openModal(id) {
+        closeAll();
+        document.getElementById(id).style.display = 'flex';
+    }
+
+    function closeAll() {
+        document.querySelectorAll('.sidebar').forEach(s => s.classList.remove('open'));
+        document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none');
+    }
+
+    function updateDP(e) {
+        if(e.target.files[0]) document.getElementById('user-dp-view').src = URL.createObjectURL(e.target.files[0]);
+    }
+
+    // Chat Logic
+    const chars = {
+        'Rani': { img: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&q=80', msg: "Tumhe kitni baar kaha hai jaldi reply kiya karo! 😒" },
+        'Aditi': { img: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&q=80', msg: "Aapne time pe khana khaya aaj?" },
+        'Priya': { img: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=100&q=80', msg: "Bore ho rahi hoon, chalo kuch fun karte hain 😉" },
+        'Suhani': { img: 'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=100&q=80', msg: "Aapka message dekh kar smile aa jati hai 🙈" },
+        'Arohi': { img: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=100&q=80', msg: "Tumhari din bhar ki bheed mein meri yaad aati hai?" }
     };
+    let activeChar = '';
 
-    let activeGirl = 'Rani';
-
-    function loadCompanion(name) {
-        activeGirl = name;
-        if(!companions[name]) name = 'Rani'; // Fallback
-        
-        document.getElementById('head-name').innerText = name;
-        document.getElementById('head-dp').src = companions[name].img;
-        
-        // Highlight menu
+    function loadChar(name) {
+        activeChar = name;
+        document.getElementById('chat-name').innerText = name;
+        document.getElementById('chat-dp').src = chars[name].img;
         document.querySelectorAll('.item-girl').forEach(e => e.classList.remove('active'));
         event.currentTarget.classList.add('active');
+        closeAll();
         
-        closePanels();
-        
-        // Load initial chat
-        const box = document.getElementById('chat-box');
-        box.innerHTML = '';
-        addMsg(companions[name].msg, 'ai');
+        document.getElementById('chat-box').innerHTML = '';
+        pushMsg(chars[name].msg, 'ai');
     }
 
-    function loadHistoryChat(title) {
-        closePanels();
-        const box = document.getElementById('chat-box');
-        box.innerHTML = '';
-        addMsg(`*Viewing old chat:* ${title}`, 'ai');
-        addMsg("Tum mujhe ignore kar rahe the us din!", 'ai');
-        addMsg("Sorry yaar, galti ho gayi thi.", 'user');
+    function loadOldChat(title) {
+        closeAll();
+        document.getElementById('chat-box').innerHTML = '';
+        pushMsg(`*History loaded: ${title}*`, 'ai');
+        pushMsg("Main aapse baat nahi karungi ab.", 'ai');
+        pushMsg("Sorry gussa mat karo yaar.", 'user');
+    }
+
+    function clearHistory() {
+        closeAll();
+        document.getElementById('chat-box').innerHTML = `<div style="text-align:center; color:gray; font-size:0.8rem; margin-top:20px;">History Cleared</div>`;
     }
 
     function sendMsg() {
-        const input = document.getElementById('msg-input');
-        if(!input.value.trim()) return;
-        
-        addMsg(input.value, 'user');
-        input.value = '';
-        
-        setTimeout(() => {
-            addMsg("Hmm... sach mein? ❤️", 'ai');
-        }, 1200);
+        const inp = document.getElementById('msg-input');
+        if(!inp.value.trim()) return;
+        pushMsg(inp.value, 'user');
+        inp.value = '';
+        setTimeout(() => pushMsg("Hmm, aage batao ❤️", 'ai'), 1200);
     }
 
-    function sendFile(event) {
-        if(!event.target.files[0]) return;
-        const fileUrl = URL.createObjectURL(event.target.files[0]);
-        addMsg(`<img src="${fileUrl}" style="max-width:100%; border-radius:10px;">`, 'user');
-        
-        setTimeout(() => {
-            addMsg("Wow! Yeh toh bahut khoobsurat hai! 😍", 'ai');
-        }, 1500);
+    function handleFile(e) {
+        if(!e.target.files[0]) return;
+        const url = URL.createObjectURL(e.target.files[0]);
+        pushMsg(`<img src="${url}" style="max-width:100%; border-radius:10px;">`, 'user');
+        setTimeout(() => pushMsg("Wow! Nice pic 😍", 'ai'), 1500);
     }
 
-    function addMsg(text, type) {
+    function pushMsg(txt, type) {
         const box = document.getElementById('chat-box');
         const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-        box.innerHTML += `
-            <div class="msg msg-${type}">
-                ${text}
-                <span class="msg-time">${time} ${type === 'user' ? '<i class="fas fa-check-double" style="color:#4ade80;"></i>' : ''}</span>
-            </div>
-        `;
+        box.innerHTML += `<div class="msg msg-${type}">${txt}<span class="msg-time">${time} ${type==='user'?'<i class="fas fa-check-double" style="color:#4ade80;"></i>':''}</span></div>`;
         box.scrollTop = box.scrollHeight;
     }
 </script>
