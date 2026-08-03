@@ -2,7 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Yeh line app ko ekdum native full-screen feel degi -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#1a1d24">
     <title>Aimi - Your AI Companion</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -18,11 +20,26 @@
             --error-color: #ff4757;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-        body { background-color: var(--bg-color); color: var(--text-main); height: 100vh; overflow: hidden; display: flex; justify-content: center; align-items: center; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; -webkit-tap-highlight-color: transparent; }
+        
+        body { 
+            background-color: var(--bg-color); 
+            color: var(--text-main); 
+            height: 100vh; 
+            width: 100vw;
+            overflow: hidden; 
+            display: flex; 
+            justify-content: center; 
+        }
 
-        /* --- UI WRAPPER --- */
-        #app-wrapper { width: 100%; max-width: 450px; height: 100vh; position: relative; background: var(--bg-color); box-shadow: 0 0 50px rgba(0,0,0,0.5); overflow: hidden; }
+        /* --- UI WRAPPER (100% MOBILE RATIO) --- */
+        #app-wrapper { 
+            width: 100%; 
+            height: 100%; 
+            position: relative; 
+            background: var(--bg-color); 
+            overflow: hidden; 
+        }
 
         /* --- SCREENS --- */
         .screen { width: 100%; height: 100%; position: absolute; top: 0; left: 0; display: none; flex-direction: column; }
@@ -31,94 +48,115 @@
         /* --- SPLASH SCREEN --- */
         #splash-screen { background: linear-gradient(135deg, #0d0f14 0%, #1a1016 100%); justify-content: center; align-items: center; z-index: 50; }
         .logo-img { width: 140px; height: 140px; border-radius: 35px; object-fit: cover; box-shadow: 0 0 40px rgba(255, 51, 102, 0.4); animation: float 3s infinite; }
-        .app-title { margin-top: 20px; font-size: 2.5rem; font-weight: 700; background: linear-gradient(45deg, #fff, #ffb3c6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .social-bottom { position: absolute; bottom: 30px; display: flex; flex-direction: column; align-items: center; gap: 15px; }
-        .social-bottom div { color: var(--text-muted); font-size: 0.8rem; letter-spacing: 2px; }
-        .social-icons { display: flex; gap: 20px; font-size: 1.5rem; }
-        .social-icons a { color: var(--text-muted); transition: 0.3s; text-decoration: none; }
-        .social-icons a:hover { color: var(--primary-color); }
+        .app-title { margin-top: 20px; font-size: 2.8rem; font-weight: 700; background: linear-gradient(45deg, #fff, #ffb3c6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 2px;}
+        
+        /* SOCIAL MEDIA HIGHLIGHTS */
+        .social-promo { margin-top: 20px; display: flex; flex-direction: column; align-items: center; gap: 10px; background: rgba(255, 51, 102, 0.1); padding: 15px 30px; border-radius: 20px; border: 1px solid rgba(255, 51, 102, 0.3); }
+        .social-promo p { font-size: 0.8rem; color: #ffb3c6; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+        .social-icons { display: flex; gap: 25px; font-size: 1.8rem; }
+        .social-icons a { color: var(--text-main); transition: 0.3s; text-decoration: none; }
+        .social-icons a:hover { color: var(--primary-color); transform: scale(1.1); }
 
-        /* --- AUTH SCREEN --- */
-        #auth-screen { padding: 30px 20px; background: linear-gradient(135deg, #1a1d24, #0d0f14); justify-content: center; z-index: 40; overflow-y: auto;}
-        .auth-box { background: rgba(26, 29, 36, 0.9); padding: 30px 20px; border-radius: 20px; border: 1px solid var(--border-color); }
-        .auth-tabs { display: flex; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); }
-        .auth-tab { flex: 1; text-align: center; padding: 10px; cursor: pointer; color: var(--text-muted); font-weight: 500; }
-        .auth-tab.active { color: var(--primary-color); border-bottom: 2px solid var(--primary-color); }
+        .powered-by-text { position: absolute; bottom: 30px; color: var(--text-muted); font-size: 0.8rem; letter-spacing: 3px; }
+
+        /* --- AUTH SCREEN (Login/Signup) --- */
+        #auth-screen { background: linear-gradient(135deg, #1a1d24, #0d0f14); z-index: 40; overflow-y: auto; display: none; flex-direction: column; }
+        .auth-header { padding: 40px 20px 20px; text-align: center; }
+        .auth-header img { width: 70px; border-radius: 18px; margin-bottom: 15px; box-shadow: 0 0 20px rgba(255,51,102,0.3); }
+        .auth-box { background: var(--surface-color); padding: 30px 25px; border-radius: 30px 30px 0 0; flex: 1; border-top: 1px solid var(--border-color); box-shadow: 0 -10px 30px rgba(0,0,0,0.5); }
+        .auth-tabs { display: flex; margin-bottom: 25px; background: #0d0f14; border-radius: 15px; padding: 5px; }
+        .auth-tab { flex: 1; text-align: center; padding: 12px; cursor: pointer; color: var(--text-muted); font-weight: 600; border-radius: 12px; transition: 0.3s; }
+        .auth-tab.active { background: var(--primary-color); color: white; }
         .auth-form { display: none; flex-direction: column; gap: 15px; }
         .auth-form.active { display: flex; }
-        .input-group { display: flex; flex-direction: column; gap: 5px; }
-        .input-group label { font-size: 0.8rem; color: var(--text-muted); }
-        .input-group input { padding: 12px; border-radius: 10px; border: 1px solid var(--border-color); background: #0d0f14; color: white; outline: none; }
-        .input-group input:focus { border-color: var(--primary-color); }
-        .auth-btn { background: var(--primary-color); color: white; border: none; padding: 15px; border-radius: 10px; font-weight: 600; font-size: 1rem; cursor: pointer; margin-top: 10px; }
-        .error-msg { color: var(--error-color); font-size: 0.8rem; text-align: center; display: none; }
+        .input-group { display: flex; flex-direction: column; gap: 8px; }
+        .input-group label { font-size: 0.85rem; color: #a1a1aa; font-weight: 500; }
+        .input-group input { padding: 15px; border-radius: 12px; border: 1px solid #3f3f46; background: #0d0f14; color: white; outline: none; font-size: 1rem; transition: 0.3s; }
+        .input-group input:focus { border-color: var(--primary-color); box-shadow: 0 0 10px rgba(255,51,102,0.2); }
+        .auth-btn { background: linear-gradient(45deg, var(--primary-color), var(--secondary-color)); color: white; border: none; padding: 16px; border-radius: 12px; font-weight: 700; font-size: 1.1rem; cursor: pointer; margin-top: 15px; box-shadow: 0 5px 15px rgba(255,51,102,0.3); }
+        .error-msg { color: var(--error-color); font-size: 0.85rem; text-align: center; display: none; font-weight: 500; }
 
         /* --- MAIN APP SCREEN --- */
-        header { padding: 15px 20px; background-color: var(--surface-color); display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); z-index: 10; }
+        header { padding: 15px 20px; background-color: rgba(26, 29, 36, 0.95); backdrop-filter: blur(10px); display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); z-index: 10; position: sticky; top: 0; }
         .header-left { display: flex; align-items: center; gap: 15px; }
-        .menu-btn, .history-btn { font-size: 1.4rem; cursor: pointer; color: var(--text-main); }
-        .active-char-name { font-size: 1.1rem; font-weight: 600; margin: 0; }
+        .menu-btn, .history-btn { font-size: 1.5rem; cursor: pointer; color: var(--text-main); padding: 5px; }
+        .active-char-name { font-size: 1.15rem; font-weight: 600; margin: 0; }
         .active-char-status { font-size: 0.75rem; color: #4ade80; }
         
-        .chat-area { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; background: var(--bg-color); }
-        .message { max-width: 80%; padding: 12px 16px; border-radius: 20px; font-size: 0.95rem; line-height: 1.4; word-wrap: break-word;}
+        .chat-area { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; background: url('https://www.transparenttextures.com/patterns/cubes.png') var(--bg-color); }
+        .message { max-width: 85%; padding: 14px 18px; border-radius: 20px; font-size: 1rem; line-height: 1.4; word-wrap: break-word; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
         .msg-ai { background-color: var(--surface-color); align-self: flex-start; border-bottom-left-radius: 5px; }
-        .msg-user { background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); align-self: flex-end; border-bottom-right-radius: 5px; }
+        .msg-user { background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); align-self: flex-end; border-bottom-right-radius: 5px; color: white; }
         
-        .input-area { padding: 15px 20px; background-color: var(--surface-color); display: flex; gap: 10px; align-items: center; position: relative; }
-        .input-area input { flex: 1; padding: 12px 20px; border-radius: 30px; border: none; background-color: #2a2d36; color: white; outline: none; }
-        .send-btn { background: var(--primary-color); width: 45px; height: 45px; border-radius: 50%; display: flex; justify-content: center; align-items: center; border: none; color: white; cursor: pointer;}
+        /* Input Area */
+        .input-area { padding: 12px 15px; background-color: var(--surface-color); display: flex; gap: 12px; align-items: center; position: relative; padding-bottom: calc(12px + env(safe-area-inset-bottom)); border-top: 1px solid var(--border-color); }
+        .input-area input { flex: 1; padding: 14px 20px; border-radius: 30px; border: 1px solid #3f3f46; background-color: #0d0f14; color: white; outline: none; font-size: 1rem; }
+        .send-btn { background: var(--primary-color); width: 48px; height: 48px; border-radius: 50%; display: flex; justify-content: center; align-items: center; border: none; color: white; cursor: pointer; font-size: 1.2rem; }
         
         /* Media Attach Menu */
-        .attach-menu { position: absolute; bottom: 70px; left: 20px; background: var(--surface-color); border: 1px solid var(--border-color); border-radius: 15px; padding: 10px; display: none; flex-direction: column; gap: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
-        .attach-menu.show { display: flex; }
-        .attach-item { display: flex; align-items: center; gap: 10px; padding: 10px 20px; cursor: pointer; border-radius: 10px; transition: 0.3s; }
-        .attach-item:hover { background: #2a2d36; color: var(--primary-color); }
+        .attach-menu { position: absolute; bottom: 80px; left: 15px; background: #2a2d36; border: 1px solid #3f3f46; border-radius: 15px; padding: 10px; display: none; flex-direction: column; gap: 5px; box-shadow: 0 10px 25px rgba(0,0,0,0.6); z-index: 20; }
+        .attach-menu.show { display: flex; animation: fadeIn 0.2s ease; }
+        .attach-item { display: flex; align-items: center; gap: 12px; padding: 12px 20px; cursor: pointer; border-radius: 10px; font-weight: 500; font-size: 1rem; transition: 0.2s; }
+        .attach-item:hover { background: #3f3f46; }
 
         /* --- SIDEBARS (Menu & History) --- */
-        .sidebar { position: absolute; top: 0; width: 280px; height: 100%; background: var(--surface-color); z-index: 30; transition: 0.3s ease; box-shadow: 0 0 20px rgba(0,0,0,0.8); display: flex; flex-direction: column; }
+        .sidebar { position: absolute; top: 0; width: 85%; max-width: 320px; height: 100%; background: var(--surface-color); z-index: 100; transition: 0.3s ease-in-out; box-shadow: 0 0 30px rgba(0,0,0,0.9); display: flex; flex-direction: column; }
         .sidebar-left { left: -100%; }
         .sidebar-left.open { left: 0; }
         .sidebar-right { right: -100%; }
         .sidebar-right.open { right: 0; }
         
-        .sidebar-header { padding: 25px 20px; background: linear-gradient(135deg, #1a1d24, #2a1115); border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
-        .close-sidebar { font-size: 1.5rem; cursor: pointer; color: var(--text-muted); }
+        .sidebar-header { padding: 30px 20px 20px; background: linear-gradient(135deg, #1a1d24, #2a1115); border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
+        .close-sidebar { font-size: 1.5rem; cursor: pointer; color: var(--text-muted); padding: 5px; }
         
-        .menu-list { flex: 1; overflow-y: auto; padding: 10px 0; }
-        .menu-item { padding: 15px 25px; display: flex; align-items: center; gap: 15px; cursor: pointer; border-bottom: 1px solid #222; font-size: 1rem; transition: 0.3s; }
-        .menu-item:hover, .menu-item.active { background: #2a2d36; color: var(--primary-color); border-left: 3px solid var(--primary-color); }
-        .menu-label { font-size: 0.75rem; color: var(--text-muted); padding: 10px 25px; text-transform: uppercase; letter-spacing: 1px; }
+        .menu-list { flex: 1; overflow-y: auto; padding: 15px 0; }
+        .menu-item { padding: 15px 25px; display: flex; align-items: center; gap: 15px; cursor: pointer; border-bottom: 1px solid #222; font-size: 1.05rem; transition: 0.2s; font-weight: 500; }
+        .menu-item:active { background: #2a2d36; }
+        .menu-item.active { background: rgba(255,51,102,0.1); color: var(--primary-color); border-left: 4px solid var(--primary-color); }
+        .menu-label { font-size: 0.8rem; color: var(--text-muted); padding: 10px 25px; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; margin-top: 10px; }
 
         /* History specific */
-        .new-chat-btn { margin: 20px; padding: 12px; background: transparent; border: 1px solid var(--primary-color); color: var(--primary-color); border-radius: 10px; display: flex; justify-content: center; align-items: center; gap: 10px; cursor: pointer; transition: 0.3s; }
-        .new-chat-btn:hover { background: var(--primary-color); color: white; }
+        .new-chat-btn { margin: 20px; padding: 14px; background: transparent; border: 2px solid var(--primary-color); color: var(--primary-color); border-radius: 12px; display: flex; justify-content: center; align-items: center; gap: 10px; cursor: pointer; font-weight: 600; font-size: 1rem; transition: 0.3s; }
+        .new-chat-btn:active { background: var(--primary-color); color: white; }
+
+        /* Overlay for Sidebar */
+        .overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(2px); z-index: 90; display: none; opacity: 0; transition: 0.3s; }
+        .overlay.show { display: block; opacity: 1; }
 
         @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-10px); } 100% { transform: translateY(0px); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
 <div id="app-wrapper">
     
+    <!-- Hidden File Inputs for REAL GALLERY Opening -->
+    <input type="file" id="photo-upload" accept="image/*" style="display:none;" onchange="handleFileUpload(event, 'photo')">
+    <input type="file" id="video-upload" accept="video/*" style="display:none;" onchange="handleFileUpload(event, 'video')">
+
     <!-- 1. SPLASH SCREEN -->
     <div id="splash-screen" class="screen active-screen">
         <img src="98.30.png" class="logo-img" alt="Aimi Logo" onerror="this.src='https://via.placeholder.com/140/ff3366/ffffff?text=A'">
         <div class="app-title">AIMI</div>
-        <div class="social-bottom">
-            <div>POWERED BY EAGLEARC</div>
+        
+        <div class="social-promo">
+            <p>Connect with Eaglearc</p>
             <div class="social-icons">
                 <a href="https://www.instagram.com/justanajnabi" target="_blank"><i class="fab fa-instagram"></i></a>
                 <a href="https://t.me/eagleaarc" target="_blank"><i class="fab fa-telegram"></i></a>
             </div>
         </div>
+        
+        <div class="powered-by-text">POWERED BY EAGLEARC</div>
     </div>
 
     <!-- 2. AUTH SCREEN (Login/Signup) -->
     <div id="auth-screen" class="screen">
-        <div style="text-align: center; margin-bottom: 20px;">
-            <img src="98.30.png" style="width: 80px; border-radius: 20px;" onerror="this.src='https://via.placeholder.com/80/ff3366/ffffff?text=A'">
-            <h2 style="margin-top: 10px;">Welcome to AIMI</h2>
+        <div class="auth-header">
+            <img src="98.30.png" onerror="this.src='https://via.placeholder.com/70/ff3366/ffffff?text=A'">
+            <h2>Welcome to AIMI</h2>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 5px;">Your Premium AI Companion</p>
         </div>
         
         <div class="auth-box">
@@ -162,12 +200,13 @@
                 <div class="error-msg" id="reg-error"></div>
                 <button class="auth-btn" onclick="doSignup()">Create Account</button>
             </div>
-        </div>
-        
-        <div class="social-bottom" style="position: relative; margin-top: 30px; bottom: 0;">
-            <div class="social-icons">
-                <a href="https://www.instagram.com/justanajnabi" target="_blank"><i class="fab fa-instagram"></i></a>
-                <a href="https://t.me/eagleaarc" target="_blank"><i class="fab fa-telegram"></i></a>
+            
+            <div style="text-align: center; margin-top: 30px;">
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 10px;">Follow Us For Updates</p>
+                <div class="social-icons" style="justify-content: center; font-size: 1.5rem;">
+                    <a href="https://www.instagram.com/justanajnabi" target="_blank"><i class="fab fa-instagram"></i></a>
+                    <a href="https://t.me/eagleaarc" target="_blank"><i class="fab fa-telegram"></i></a>
+                </div>
             </div>
         </div>
     </div>
@@ -196,21 +235,34 @@
 
         <!-- Input Area -->
         <div class="input-area">
-            <i class="fas fa-plus-circle" style="color:var(--text-muted); font-size:1.4rem; cursor:pointer;" onclick="toggleMediaMenu()"></i>
+            <i class="fas fa-plus-circle" style="color:var(--text-muted); font-size:1.6rem; cursor:pointer;" onclick="toggleMediaMenu()"></i>
             
+            <!-- Custom Attach Menu -->
             <div class="attach-menu" id="attach-menu">
-                <div class="attach-item" onclick="triggerFile('photo')"><i class="fas fa-image" style="color: #4ade80;"></i> Send Photo</div>
-                <div class="attach-item" onclick="triggerFile('video')"><i class="fas fa-video" style="color: #ff3366;"></i> Send Video</div>
+                <div class="attach-item" onclick="triggerFile('photo')">
+                    <i class="fas fa-image" style="color: #4ade80; font-size: 1.2rem;"></i> 
+                    Gallery Photo
+                </div>
+                <div class="attach-item" onclick="triggerFile('video')">
+                    <i class="fas fa-video" style="color: #ff3366; font-size: 1.2rem;"></i> 
+                    Gallery Video
+                </div>
             </div>
 
             <input type="text" id="chat-input" placeholder="Type a message...">
             <button class="send-btn" onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
         </div>
 
+        <!-- OVERLAY FOR SIDEBARS -->
+        <div class="overlay" id="app-overlay" onclick="closeAllSidebars()"></div>
+
         <!-- LEFT SIDEBAR: Character Menu -->
         <div class="sidebar sidebar-left" id="sidebar-menu">
             <div class="sidebar-header">
-                <h3>AIMI <span style="font-size: 0.8rem; color: var(--primary-color); display:block;">By Eaglearc</span></h3>
+                <div>
+                    <h3 style="letter-spacing: 1px;">AIMI</h3>
+                    <span style="font-size: 0.8rem; color: var(--primary-color);">By Eaglearc</span>
+                </div>
                 <i class="fas fa-times close-sidebar" onclick="toggleSidebar('sidebar-menu')"></i>
             </div>
             <div class="menu-list">
@@ -221,14 +273,18 @@
                 <div class="menu-item" id="menu-suhani" onclick="selectChar('Suhani')"><i class="fas fa-dove" style="color:#7bed9f;"></i> Suhani (Sweet)</div>
                 <div class="menu-item" id="menu-arohi" onclick="selectChar('Arohi')"><i class="fas fa-moon" style="color:#70a1ff;"></i> Arohi (Deep)</div>
                 
-                <div class="menu-label" style="margin-top: 20px;">Settings</div>
-                <div class="menu-item"><i class="fas fa-user-circle"></i> Profile</div>
-                <div class="menu-item"><i class="fas fa-robot"></i> System Guide</div>
-                <div class="menu-item" style="color: var(--error-color);" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</div>
+                <div class="menu-label" style="margin-top: 15px;">App & Socials</div>
+                <a href="https://www.instagram.com/justanajnabi" target="_blank" style="text-decoration:none; color:inherit;">
+                    <div class="menu-item"><i class="fab fa-instagram" style="color:#E1306C;"></i> Instagram</div>
+                </a>
+                <a href="https://t.me/eagleaarc" target="_blank" style="text-decoration:none; color:inherit;">
+                    <div class="menu-item"><i class="fab fa-telegram" style="color:#0088cc;"></i> Telegram Channel</div>
+                </a>
+                <div class="menu-item" style="color: var(--error-color); margin-top: 10px;" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</div>
             </div>
         </div>
 
-        <!-- RIGHT SIDEBAR: Chat History (ChatGPT Style) -->
+        <!-- RIGHT SIDEBAR: Chat History -->
         <div class="sidebar sidebar-right" id="sidebar-history">
             <div class="sidebar-header">
                 <h3>Chat History</h3>
@@ -239,8 +295,15 @@
                 <div class="menu-label">Today</div>
                 <div class="menu-item" style="font-size: 0.9rem;"><i class="far fa-comment-alt"></i> Late reply fight...</div>
                 <div class="menu-label">Yesterday</div>
-                <div class="menu-item" style="font-size: 0.9rem;"><i class="far fa-comment-alt"></i> Office ki baatein</div>
-                <div class="menu-item" style="font-size: 0.9rem;"><i class="far fa-comment-alt"></i> Movie plan cancel</div>
+                <div class="menu-item" style="font-size: 0.9rem;"><i class="far fa-comment-alt"></i> Movie plan...</div>
+            </div>
+            <!-- Socials here too -->
+            <div style="text-align: center; margin-top: auto; padding: 20px 0; border-top: 1px solid #222;">
+                <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 10px;">Support Us</p>
+                <div class="social-icons" style="justify-content: center;">
+                    <a href="https://www.instagram.com/justanajnabi" target="_blank"><i class="fab fa-instagram"></i></a>
+                    <a href="https://t.me/eagleaarc" target="_blank"><i class="fab fa-telegram"></i></a>
+                </div>
             </div>
         </div>
 
@@ -248,39 +311,34 @@
 </div>
 
 <script>
-    // --- GLOBAL VARIABLES ---
     let activeChar = 'Rani';
     
-    // Dummy Database for Character Chats
+    // DB Logic
     const chatDB = {
         'Rani': [
-            { type: 'ai', msg: "Kya hua? Itni der se reply kyun nahi kiya tumne? Main koi free baithi hoon kya tumhara wait karne ke liye? 😒" },
-            { type: 'user', msg: "Sorry yaar, meeting mein tha. Gussa mat kar na." }
+            { type: 'ai', msg: "Kya hua? Itni der se reply kyun nahi kiya tumne? Main koi free baithi hoon kya tumhara wait karne ke liye? 😒" }
         ],
         'Aditi': [
-            { type: 'ai', msg: "Suno, tumne khana khaya ya nahi? Subah se bhuke kaam kar rahe ho kya?" }
+            { type: 'ai', msg: "Suno, tumne khana khaya ya nahi? Dhyan rakha karo apna." }
         ],
         'Priya': [
-            { type: 'ai', msg: "Boring lag raha hai! Chalo koi game khelte hain ya flirt karte hain 😉" }
+            { type: 'ai', msg: "Boring lag raha hai! Chalo flirt karte hain 😉" }
         ],
         'Suhani': [
             { type: 'ai', msg: "Aap kaise ho? Maine aaj aapke baare mein hi socha poora din... 🙈" }
         ],
         'Arohi': [
-            { type: 'ai', msg: "Raat bahut gehri ho gayi hai... tumhari life mein sab theek chal raha hai na? Mujhe sab batao." }
+            { type: 'ai', msg: "Raat bahut gehri ho gayi hai... sab batao." }
         ]
     };
 
-    // --- APP FLOW LOGIC ---
     window.onload = () => {
-        // Splash screen 3 seconds
         setTimeout(() => {
             document.getElementById('splash-screen').classList.remove('active-screen');
             document.getElementById('auth-screen').classList.add('active-screen');
         }, 3000);
     };
 
-    // --- AUTHENTICATION LOGIC ---
     function switchAuth(type) {
         document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
         document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
@@ -310,19 +368,9 @@
         const errorDiv = document.getElementById('reg-error');
 
         errorDiv.style.display = 'block';
+        if(!name || !email || !dob || !pass) { errorDiv.innerText = "All fields are required!"; return; }
+        if(calculateAge(dob) < 18) { errorDiv.innerText = "Access Denied: You must be 18+ to use Aimi."; return; }
 
-        if(!name || !email || !dob || !pass) {
-            errorDiv.innerText = "All fields are strictly required!";
-            return;
-        }
-
-        const age = calculateAge(dob);
-        if(age < 18) {
-            errorDiv.innerText = "Access Denied: You must be 18 years or older to use Aimi.";
-            return;
-        }
-
-        // Success
         errorDiv.style.display = 'none';
         enterApp();
     }
@@ -332,11 +380,7 @@
         const pass = document.getElementById('log-pass').value;
         const errorDiv = document.getElementById('login-error');
 
-        if(!email || !pass) {
-            errorDiv.style.display = 'block';
-            errorDiv.innerText = "Email and Password are required!";
-            return;
-        }
+        if(!email || !pass) { errorDiv.style.display = 'block'; errorDiv.innerText = "Email and Password required!"; return; }
         
         errorDiv.style.display = 'none';
         enterApp();
@@ -351,55 +395,83 @@
     function logout() {
         document.getElementById('main-screen').classList.remove('active-screen');
         document.getElementById('auth-screen').classList.add('active-screen');
-        toggleSidebar('sidebar-menu'); // close menu
+        closeAllSidebars();
     }
 
-    // --- MENU & UI LOGIC ---
     function toggleSidebar(id) {
         const el = document.getElementById(id);
-        el.classList.toggle('open');
+        const overlay = document.getElementById('app-overlay');
+        
+        if (el.classList.contains('open')) {
+            el.classList.remove('open');
+            overlay.classList.remove('show');
+        } else {
+            closeAllSidebars(); // Close others first
+            el.classList.add('open');
+            overlay.classList.add('show');
+        }
+    }
+
+    function closeAllSidebars() {
+        document.getElementById('sidebar-menu').classList.remove('open');
+        document.getElementById('sidebar-history').classList.remove('open');
+        document.getElementById('app-overlay').classList.remove('show');
     }
 
     function toggleMediaMenu() {
-        const el = document.getElementById('attach-menu');
-        el.classList.toggle('show');
+        document.getElementById('attach-menu').classList.toggle('show');
     }
 
+    // --- REAL GALLERY LOGIC ---
     function triggerFile(type) {
-        toggleMediaMenu();
-        // Simulating sending media
+        document.getElementById('attach-menu').classList.remove('show');
+        document.getElementById(type + '-upload').click(); // This opens native Gallery
+    }
+
+    function handleFileUpload(event, type) {
+        const file = event.target.files[0];
+        if (!file) return;
+
         const container = document.getElementById('chat-container');
-        const icon = type === 'photo' ? '<i class="fas fa-image"></i> Photo attached' : '<i class="fas fa-video"></i> Video attached';
-        container.innerHTML += `<div class="message msg-user" style="opacity:0.8;">${icon}</div>`;
+        const fileUrl = URL.createObjectURL(file); // Create local URL for the selected file
+
+        let mediaHTML = '';
+        if (type === 'photo') {
+            mediaHTML = `<img src="${fileUrl}" style="max-width: 100%; border-radius: 12px; margin-top: 5px; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">`;
+        } else {
+            mediaHTML = `<video src="${fileUrl}" controls style="max-width: 100%; border-radius: 12px; margin-top: 5px; box-shadow: 0 4px 10px rgba(0,0,0,0.3);"></video>`;
+        }
+
+        // Add to chat UI
+        container.innerHTML += `<div class="message msg-user">${mediaHTML}</div>`;
         container.scrollTop = container.scrollHeight;
         
-        // AI reply
+        // Reset input so same file can be selected again
+        event.target.value = '';
+
+        // AI Reaction
         setTimeout(() => {
-            container.innerHTML += `<div class="message msg-ai">Wow! Ye bahut achha hai 😍</div>`;
+            let reaction = type === 'photo' ? "Wow! Tumhari photo bahut achhi hai 😍" : "Video dekhi maine, maza aa gaya! 🔥";
+            container.innerHTML += `<div class="message msg-ai">${reaction}</div>`;
             container.scrollTop = container.scrollHeight;
         }, 1500);
     }
 
     function selectChar(charName) {
         activeChar = charName;
-        
-        // Update UI
-        let icon = '';
-        if(charName === 'Rani') icon = '<i class="fas fa-crown" style="color: gold; font-size: 0.8rem;"></i>';
+        let icon = charName === 'Rani' ? '<i class="fas fa-crown" style="color: gold; font-size: 0.8rem;"></i>' : '';
         document.getElementById('ui-char-name').innerHTML = `${charName} ${icon}`;
         
-        // Update Sidebar highlighting
         document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
         document.getElementById(`menu-${charName.toLowerCase()}`).classList.add('active');
         
-        toggleSidebar('sidebar-menu'); // close sidebar
+        closeAllSidebars();
         loadChat(charName);
     }
 
     function loadChat(charName) {
         const container = document.getElementById('chat-container');
-        container.innerHTML = ''; // Clear old chat
-        
+        container.innerHTML = '';
         const history = chatDB[charName];
         history.forEach(chat => {
             const cssClass = chat.type === 'ai' ? 'msg-ai' : 'msg-user';
@@ -414,17 +486,13 @@
         if(!msg) return;
 
         const container = document.getElementById('chat-container');
-        // Add user msg
         container.innerHTML += `<div class="message msg-user">${msg}</div>`;
         input.value = '';
         container.scrollTop = container.scrollHeight;
 
-        // Simulate AI Reply
         setTimeout(() => {
-            let aiReply = "Main sun rahi hoon... aage bolo.";
+            let aiReply = "Aage bolo, main sun rahi hoon.";
             if(activeChar === 'Rani') aiReply = "Pehle properly baat karo mujhse!";
-            if(activeChar === 'Aditi') aiReply = "Achha theek hai, par apna dhyan rakhna.";
-            
             container.innerHTML += `<div class="message msg-ai">${aiReply}</div>`;
             container.scrollTop = container.scrollHeight;
         }, 1000);
@@ -433,7 +501,7 @@
     function startNewChat() {
         const container = document.getElementById('chat-container');
         container.innerHTML = `<div class="message msg-ai">New conversation started with ${activeChar}.</div>`;
-        toggleSidebar('sidebar-history');
+        closeAllSidebars();
     }
 </script>
 </body>
